@@ -2,10 +2,13 @@ PROJECT := hello_world
 
 ################################################################################
 
-CC := gcc
-AR := ar
-SIZE := size
-OBJCOPY := objcopy
+TOOLCHAIN := 
+
+CC := $(TOOLCHAIN)gcc
+AR := $(TOOLCHAIN)ar
+SIZE := $(TOOLCHAIN)size
+OBJCOPY := $(TOOLCHAIN)objcopy
+
 RM := rm
 MK := mkdir
 
@@ -86,19 +89,20 @@ $(OUT_DIR)%/.:
 .SECONDEXPANSION:
 
 $(TARGET): $(OBJS)
-	@echo "(LD) $^"
+	@echo "(LD) $@"
 	@$(CC) $(LDFLAGS) $^ -o $@ 
+	@$(SIZE) $@
 
 $(OUT_DIR)/main/%.o: $(PROJECT_DIR)/%.c | $$(@D)/.
-	@echo "(CC) $^"
+	@echo "(CC) $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
 $(OUT_DIR)/freertos/%.o: $(FREERTOS_SRC_DIR)/%.c | $$(@D)/.
-	@echo "(CC) $^"
+	@echo "(CC) $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
 $(OUT_DIR)/common/%.o: $(COMMON_SRC_DIR)/%.c | $$(@D)/.
-	@echo "(CC) $^"
+	@echo "(CC) $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
