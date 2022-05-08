@@ -3,6 +3,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "shell.h"
+
 #define TASK_NAME               "task"
 #define TASK_PRIORITY           (tskIDLE_PRIORITY + 1)
 #define TASK_STACK_SIZE         (configMINIMAL_STACK_SIZE)
@@ -13,7 +15,7 @@ static void task_service(void *pvParameters)
                 vTaskDelay(1000UL / portTICK_RATE_MS);
 
                 BaseType_t current_tick = xTaskGetTickCount();
-                configPRINTF("hello: tick = %lu\n", current_tick);
+                configPRINTF("hello: tick = %lu" SHELL_NEW_LINE, current_tick);
         }
 }
 
