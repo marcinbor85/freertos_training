@@ -25,12 +25,13 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "FreeRTOS.h"
-#include "task.h"
+#include "macro.h"
+
+CREATE_MODULE_MUTEX
 
 void utils_rtos_printf(const char *fmt, ...)
 {
-        taskENTER_CRITICAL();
+        LOCK();
 
         va_list arg;
 
@@ -38,5 +39,5 @@ void utils_rtos_printf(const char *fmt, ...)
         vprintf( fmt, arg );
         va_end( arg );
 
-        taskEXIT_CRITICAL();
+        UNLOCK();
 }
