@@ -117,7 +117,7 @@ functions anyway. */
 
 #include "utils.h"
 
-#define configASSERT( x ) { if( ( x ) == 0 ) utils_rtos_assert(__FILE__, __LINE__); }
+#define configASSERT( x ) { if( ( x ) == 0 ) utils_rtos_assert(__FILE__, __func__, __LINE__); }
 #define configPRINTF( ... ) { utils_rtos_printf( __VA_ARGS__ ); }
 
 /* --------- END: extensions --------- */

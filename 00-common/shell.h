@@ -22,18 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _SHELL_H
+#define _SHELL_H
 
-#include "FreeRTOS.h"
-#include "task.h"
+#define SHELL_FONT_RESET        "\x1B[0m"
 
-#include "shell.h"
+#define SHELL_FONT_RED          "\x1B[31m"
+#define SHELL_FONT_GREEN        "\x1B[32m"
+#define SHELL_FONT_YELLOW       "\x1B[33m"
 
-void utils_rtos_assert(const char *const file, const char *const func, unsigned long line)
-{
-        taskENTER_CRITICAL();
+#define SHELL_NEW_LINE          "\r\n"
 
-        fprintf(stderr, SHELL_NEW_LINE SHELL_FONT_RED "ASSERT: %s %s:%lu" SHELL_FONT_RESET SHELL_NEW_LINE, func, file, line);
-        exit(-1);
-}
+#endif /* _SHELL_H */
