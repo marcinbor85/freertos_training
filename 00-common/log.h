@@ -42,25 +42,25 @@ SOFTWARE.
 #ifdef LOGGING_ENABLED
 
 #if LOGGING_LEVEL >= LOGGING_LEVEL_ERROR
-#define LOG_E(fmt, ...) { log_printf(LOGGING_LEVEL_ERROR, __FILE__, __func__, __LINE__, fmt, __VA_ARGS__); }
+#define LOG_E(fmt, ...) { log_printf(LOGGING_LEVEL_ERROR, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
 #else
 #define LOG_E(fmt, ...)
 #endif
 
 #if LOGGING_LEVEL >= LOGGING_LEVEL_WARNING
-#define LOG_W(fmt, ...) { log_printf(LOGGING_LEVEL_WARNING, __FILE__, __func__, __LINE__, fmt, __VA_ARGS__); }
+#define LOG_W(fmt, ...) { log_printf(LOGGING_LEVEL_WARNING, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
 #else
 #define LOG_W(fmt, ...)
 #endif
 
 #if LOGGING_LEVEL >= LOGGING_LEVEL_INFO
-#define LOG_I(fmt, ...) { log_printf(LOGGING_LEVEL_INFO, __FILE__, __func__, __LINE__, fmt, __VA_ARGS__); }
+#define LOG_I(fmt, ...) { log_printf(LOGGING_LEVEL_INFO, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
 #else
 #define LOG_I(fmt, ...)
 #endif
 
 #if LOGGING_LEVEL >= LOGGING_LEVEL_DEBUG
-#define LOG_D(fmt, ...) { log_printf(LOGGING_LEVEL_DEBUG, __FILE__, __func__, __LINE__, fmt, __VA_ARGS__); }
+#define LOG_D(fmt, ...) { log_printf(LOGGING_LEVEL_DEBUG, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
 #else
 #define LOG_D(fmt, ...)
 #endif
