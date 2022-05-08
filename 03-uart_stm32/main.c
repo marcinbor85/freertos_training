@@ -18,10 +18,11 @@
 #define UART_ECHO_TASK_STACK_SIZE       (configMINIMAL_STACK_SIZE)
 
 #define UART_BAUDRATE                   115200
+#define ECHO_BUFFER_SIZE                16
 
 static void task_service(void *pvParameters)
 {
-        LOG_I("run");
+        LOG_I("started");
 
         while(1) {
                 vTaskDelay(1000UL / portTICK_RATE_MS);
@@ -34,11 +35,11 @@ static void task_service(void *pvParameters)
 
 static void uart_echo_service(void *pvParameters)
 {
-        uint8_t buf[16];
+        uint8_t buf[ECHO_BUFFER_SIZE];
         size_t rx_size;
         size_t tx_size;
 
-        LOG_I("run");
+        LOG_I("started");
 
         while(1) {
                 rx_size = uart_read(buf, sizeof(buf), portMAX_DELAY);

@@ -33,15 +33,12 @@ SOFTWARE.
 #include <string.h>
 #include <stdarg.h>
 
-
 void log_printf(int level, const char *file, const char *func, unsigned long line, const char *fmt, ... )
 {
         char level_name[8] = {0};
         char prefix[8] = {0};
 
         utils_rtos_stdout_lock();
-
-        va_list arg;
 
         if (level <= LOGGING_LEVEL_ERROR) {
                 strcpy(level_name, "ERROR");
@@ -60,6 +57,7 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
         TickType_t ticks = xTaskGetTickCount();
         printf("%s%08lu %s %s@%s:%lu ", prefix, ticks, level_name, func, file, line);
 
+        va_list arg;
         va_start( arg, fmt );
         vprintf( fmt, arg );
         va_end( arg );

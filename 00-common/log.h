@@ -39,7 +39,7 @@ SOFTWARE.
 #define LOGGING_LEVEL LOGGING_LEVEL_DEBUG
 #endif
 
-#ifdef LOGGING_ENABLED
+#if LOGGING_ENABLED != 0
 
 #if LOGGING_LEVEL >= LOGGING_LEVEL_ERROR
 #define LOG_E(fmt, ...) { log_printf(LOGGING_LEVEL_ERROR, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
