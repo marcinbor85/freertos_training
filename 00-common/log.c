@@ -24,7 +24,7 @@ SOFTWARE.
 
 #include "log.h"
 #include "shell.h"
-#include "macro.h"
+#include "utils.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -33,14 +33,13 @@ SOFTWARE.
 #include <string.h>
 #include <stdarg.h>
 
-CREATE_MODULE_MUTEX
 
 void log_printf(int level, const char *file, const char *func, unsigned long line, const char *fmt, ... )
 {
         char level_name[8] = {0};
         char prefix[8] = {0};
 
-        LOCK();
+        utils_rtos_stdout_lock();
 
         va_list arg;
 
@@ -67,5 +66,5 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
 
         printf(SHELL_FONT_RESET SHELL_NEW_LINE);
 
-        UNLOCK();
+        utils_rtos_stdout_unlock();
 }

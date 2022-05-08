@@ -27,5 +27,7 @@ SOFTWARE.
 
 void utils_rtos_assert(const char *const file, const char *const func, unsigned long line);
 void utils_rtos_printf(const char *fmt, ...);
+void utils_rtos_stdout_lock(void);
+void utils_rtos_stdout_unlock(void);
 
 #endif /* _UTILS_H */

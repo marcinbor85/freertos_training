@@ -25,13 +25,21 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "macro.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
-CREATE_MODULE_MUTEX
+static xSemaphoreHandle g_mutex;
+
+static void mutex_lazy_init(void)
+{
+        if (g_mutex != NULL)
+                return;
+        g_mutex = xSemaphoreCreateMutex();
+}
 
 void utils_rtos_printf(const char *fmt, ...)
 {
-        LOCK();
+        utils_rtos_stdout_lock();
 
         va_list arg;
 
@@ -39,5 +47,17 @@ void utils_rtos_printf(const char *fmt, ...)
         vprintf( fmt, arg );
         va_end( arg );
 
-        UNLOCK();
+        utils_rtos_stdout_unlock();
+}
+
+void utils_rtos_stdout_lock(void)
+{
+        mutex_lazy_init();
+        xSemaphoreTake(g_mutex, portMAX_DELAY);
+}
+
+void utils_rtos_stdout_unlock(void)
+{
+        mutex_lazy_init();
+        xSemaphoreGive(g_mutex);
 }
