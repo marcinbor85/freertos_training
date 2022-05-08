@@ -34,6 +34,6 @@ void utils_rtos_assert(const char *const file, const char *const func, unsigned 
 {
         taskENTER_CRITICAL();
 
-        fprintf(stderr, SHELL_NEW_LINE SHELL_FONT_RED "ASSERT: %s %s:%lu" SHELL_FONT_RESET SHELL_NEW_LINE, func, file, line);
+        fprintf(stderr, SHELL_NEW_LINE SHELL_FONT_RED "ASSERT: %s@%s:%lu" SHELL_FONT_RESET SHELL_NEW_LINE, func, file, line);
         exit(-1);
 }
