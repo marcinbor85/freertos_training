@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 uint32_t SystemCoreClock = 48000000UL;
+uint32_t SystemPeripheralClock = 24000000UL;
+
+#define STDOUT_UART_BAUDRATE    115200UL
 
 static void HWInit(void)
 {
@@ -30,7 +33,7 @@ static void HWInit(void)
         // USART2 - config and enable
         USART2->CR1 = 0;
         USART2->CR1 |= USART_CR1_TE | USART_CR1_RE;
-        USART2->BRR = (SystemCoreClock / 2) / 115200;
+        USART2->BRR = SystemPeripheralClock / STDOUT_UART_BAUDRATE;
         USART2->CR1 |= USART_CR1_UE;
 }
 
