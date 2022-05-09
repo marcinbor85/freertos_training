@@ -30,12 +30,12 @@ SOFTWARE.
 
 extern uint32_t SystemPeripheralClock;
 
-extern size_t uart_read_callback_isr(uint8_t *data, size_t size, BaseType_t *token);
-extern size_t uart_write_callback_isr(uint8_t *data, size_t size, BaseType_t *token);
+extern size_t uart_read_callback(uint8_t *data, size_t size, BaseType_t *token);
+extern size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token);
 
 static bool g_sending;
 
-void hw_uart_init(uint32_t baudrate)
+int hw_uart_init(uint32_t baudrate)
 {
         RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
         RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
@@ -59,6 +59,8 @@ void hw_uart_init(uint32_t baudrate)
         USART3->CR1 |= USART_CR1_UE;
 
         NVIC_EnableIRQ(USART3_4_IRQn);
+
+        return 0;
 }
 
 void hw_uart_start_write(void)
@@ -83,7 +85,7 @@ void USART3_4_IRQHandler(void)
 
         if ((USART3->CR1 & USART_CR1_TXEIE) != 0) {
                 if ((USART3->ISR & USART_ISR_TXE) != 0) {
-                        size_t to_write = uart_write_callback_isr(&b, 1, &needSwitch);
+                        size_t to_write = uart_write_callback(&b, 1, &needSwitch);
                         if (to_write == 0) {
                                 USART3->CR1 &= ~USART_CR1_TXEIE;
                                 g_sending = false;
@@ -95,7 +97,7 @@ void USART3_4_IRQHandler(void)
 
         while ((USART3->ISR & USART_ISR_RXNE) != 0) {
                 b = USART3->RDR;
-                (void)uart_read_callback_isr(&b, 1, &needSwitch);
+                (void)uart_read_callback(&b, 1, &needSwitch);
         }
 
         portYIELD_FROM_ISR(needSwitch);

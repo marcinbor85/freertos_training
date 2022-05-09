@@ -28,9 +28,11 @@ SOFTWARE.
 #include <stdint.h>
 #include <stddef.h>
 
-void uart_init(uint32_t baudrate);
+#include "FreeRTOS.h"
 
-size_t uart_write(uint8_t *data, size_t size, uint32_t timeout);
-size_t uart_read(uint8_t *data, size_t size, uint32_t timeout);
+int uart_init(uint32_t baudrate);
+
+size_t uart_write(uint8_t *data, size_t size, TickType_t timeout);
+size_t uart_read(uint8_t *data, size_t size, TickType_t timeout);
 
 #endif /* _UART_H */

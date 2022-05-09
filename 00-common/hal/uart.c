@@ -42,25 +42,25 @@ SOFTWARE.
 static StreamBufferHandle_t g_rx_stream;
 static StreamBufferHandle_t g_tx_stream;
 
-extern void hw_uart_init(uint32_t baudrate);
+extern int hw_uart_init(uint32_t baudrate);
 extern void hw_uart_start_write(void);
 extern bool hw_uart_stop_write(void);
 
-size_t uart_write_callback_isr(uint8_t *data, size_t size, BaseType_t *token)
+size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token)
 {
         size_t s;
         s = xStreamBufferReceiveFromISR(g_tx_stream, data, size, token);
         return s;
 }
 
-size_t uart_read_callback_isr(uint8_t *data, size_t size, BaseType_t *token)
+size_t uart_read_callback(uint8_t *data, size_t size, BaseType_t *token)
 {
         size_t s;
         s = xStreamBufferSendFromISR(g_rx_stream, data, size, token);
         return s;
 }
 
-size_t uart_write(uint8_t *data, size_t size, uint32_t timeout)
+size_t uart_write(uint8_t *data, size_t size, TickType_t timeout)
 {
         size_t sent = 0;
         if (size == 0)
@@ -78,7 +78,7 @@ size_t uart_write(uint8_t *data, size_t size, uint32_t timeout)
         return sent;
 }
 
-size_t uart_read(uint8_t *data, size_t size, uint32_t timeout)
+size_t uart_read(uint8_t *data, size_t size, TickType_t timeout)
 {
         size_t recv = 0;
         recv = xStreamBufferReceive(g_rx_stream, data, size, timeout);
@@ -88,7 +88,7 @@ size_t uart_read(uint8_t *data, size_t size, uint32_t timeout)
         return recv;
 }
 
-void uart_init(uint32_t baudrate)
+int uart_init(uint32_t baudrate)
 {        
         g_tx_stream = xStreamBufferCreate(TX_STREAM_BUFFER_SIZE, 0);
         configASSERT(g_tx_stream != pdFALSE);
@@ -96,7 +96,12 @@ void uart_init(uint32_t baudrate)
         g_rx_stream = xStreamBufferCreate(RX_STREAM_BUFFER_SIZE, 0);
         configASSERT(g_rx_stream != pdFALSE);
 
-        hw_uart_init(baudrate);
+        int s = hw_uart_init(baudrate);
+        if (s != 0) {
+                LOG_E("init error: %d", s);
+        } else {
+                LOG_I("initialized");
+        }
 
-        LOG_I("initialized");
+        return s;
 }
