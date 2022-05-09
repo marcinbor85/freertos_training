@@ -18,7 +18,7 @@ OUT_DIR := $(PROJECT_DIR)/out
 ################################################################################
 
 SRC_FILES := \
-	$(PROJECT_DIR)/main.c \
+	$(PROJECT_DIR)/../01-hello_world/main.c \
 	$(PROJECT_DIR)/hooks.c \
 	$(PROJECT_DIR)/system.c \
 	$(PROJECT_DIR)/syscalls.c \
@@ -72,6 +72,7 @@ MCUFLAGS := -DSTM32F072xB -mthumb -mcpu=cortex-m0
 CFLAGS := -std=gnu11 -Os -g --pedantic -Wall -Werror
 CFLAGS += $(addprefix -I,$(INC_DIRS))
 CFLAGS += $(MCUFLAGS)
+CFLAGS += -DTARGET_ARCH_STM32
 
 LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
 LDFLAGS += --specs=nano.specs $(MCUFLAGS) -T$(LINKER_FILE)

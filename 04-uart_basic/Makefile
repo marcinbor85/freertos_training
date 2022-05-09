@@ -56,7 +56,7 @@ FREERTOS_SRC_FILES += \
 	$(FREERTOS_SRC_DIR)/portable/ThirdParty/GCC/Posix/utils/wait_for_event.c \
 
 FREERTOS_SRC_FILES += \
-	$(FREERTOS_SRC_DIR)/portable/MemMang/heap_3.c \
+	$(FREERTOS_SRC_DIR)/portable/MemMang/heap_4.c \
 
 INC_DIRS += \
 	$(FREERTOS_SRC_DIR)/include \
@@ -67,6 +67,7 @@ INC_DIRS += \
 
 CFLAGS := -std=gnu11 -O0 -g --pedantic -Wall -Werror
 CFLAGS += $(addprefix -I,$(INC_DIRS))
+CFLAGS += -DTARGET_ARCH_LINUX
 
 LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
 LDFLAGS += -lpthread -lrt

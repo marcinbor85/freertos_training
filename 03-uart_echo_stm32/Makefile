@@ -78,6 +78,7 @@ CFLAGS := -std=gnu11 -Os -g --pedantic -Wall -Werror
 CFLAGS += $(addprefix -I,$(INC_DIRS))
 CFLAGS += $(MCUFLAGS)
 CFLAGS += -DLOGGING_ENABLED=1
+CFLAGS += -DTARGET_ARCH_STM32
 
 LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
 LDFLAGS += --specs=nano.specs $(MCUFLAGS) -T$(LINKER_FILE)
