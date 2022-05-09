@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "uart_impl.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -40,9 +42,6 @@ SOFTWARE.
 #include "task.h"
 
 #include "log.h"
-
-extern size_t uart_read_callback(uint8_t *data, size_t size, BaseType_t *token);
-extern size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token);
 
 static int g_file_desc;
 static struct termios g_port_configs;

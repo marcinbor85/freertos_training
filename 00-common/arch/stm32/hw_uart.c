@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "uart_impl.h"
+
 #include <stdbool.h>
 
 #include <stm32f0xx.h>
@@ -29,9 +31,6 @@ SOFTWARE.
 #include "FreeRTOS.h"
 
 extern uint32_t SystemPeripheralClock;
-
-extern size_t uart_read_callback(uint8_t *data, size_t size, BaseType_t *token);
-extern size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token);
 
 static bool g_sending;
 

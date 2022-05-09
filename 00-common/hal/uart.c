@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include "uart.h"
+#include "uart_impl.h"
 
 #include <stdbool.h>
 
@@ -32,19 +33,11 @@ SOFTWARE.
 
 #include "log.h"
 
-#define TX_TASK_NAME               "tx_task"
-#define TX_TASK_PRIORITY           (tskIDLE_PRIORITY + 1)
-#define TX_TASK_STACK_SIZE         (configMINIMAL_STACK_SIZE)
-
 #define TX_STREAM_BUFFER_SIZE      64
 #define RX_STREAM_BUFFER_SIZE      64
 
 static StreamBufferHandle_t g_rx_stream;
 static StreamBufferHandle_t g_tx_stream;
-
-extern int hw_uart_init(uint32_t baudrate);
-extern void hw_uart_start_write(void);
-extern bool hw_uart_stop_write(void);
 
 size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token)
 {
