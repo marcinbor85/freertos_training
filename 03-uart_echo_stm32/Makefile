@@ -1,4 +1,4 @@
-PROJECT := uart
+PROJECT := uart_echo
 
 ################################################################################
 
@@ -38,7 +38,7 @@ COMMON_SRC_FILES := \
 	$(COMMON_SRC_DIR)/assert.c \
 	$(COMMON_SRC_DIR)/print.c \
 	$(COMMON_SRC_DIR)/log.c \
-	$(COMMON_SRC_DIR)/arch/stm32/uart.c \
+	$(COMMON_SRC_DIR)/hal/uart.c \
 	$(COMMON_SRC_DIR)/arch/stm32/hw_uart.c \
 
 INC_DIRS += \

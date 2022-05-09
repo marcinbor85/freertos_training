@@ -52,7 +52,7 @@ extern uint32_t SystemCoreClock;
 #define configTICK_RATE_HZ			( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES			( 5 )
 #define configMINIMAL_STACK_SIZE		( ( unsigned short ) 160 )
-#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 10500 ) )
+#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 9500 ) )
 #define configMAX_TASK_NAME_LEN			( 5 )
 #define configUSE_TRACE_FACILITY		1
 #define configUSE_16_BIT_TICKS			0
@@ -72,7 +72,7 @@ extern uint32_t SystemCoreClock;
 #define configMAX_CO_ROUTINE_PRIORITIES 	( 2 )
 
 /* Software timer definitions. */
-#define configUSE_TIMERS			1
+#define configUSE_TIMERS			0
 #define configTIMER_TASK_PRIORITY		( 2 )
 #define configTIMER_QUEUE_LENGTH		5
 #define configTIMER_TASK_STACK_DEPTH		( 80 )
