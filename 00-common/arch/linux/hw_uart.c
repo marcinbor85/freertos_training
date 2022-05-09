@@ -40,12 +40,14 @@ SOFTWARE.
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 
 #include "log.h"
 
 static int g_file_desc;
-static struct termios g_port_configs;
-static struct termios g_old_port_config;
+
+static SemaphoreHandle_t g_start_write;
+static bool g_sending;
 
 #define PORT_NAME       "/dev/ttyUSB0"
 
@@ -77,31 +79,39 @@ static void tx_service(void *pvParameters)
         uint8_t buf[TX_BUFFER_SIZE];
 
         while(1) {
-                size_t to_send = uart_write_callback(buf, sizeof(buf), NULL);
-                
-                int sent = 0;
-                while (sent < to_send) {
-                        int s = write(g_file_desc, &buf[sent], to_send - sent);
-                        if (s < 0) {
-                                if (errno != EAGAIN) {
-                                        break;
-                                } else {
-                                        s = 0;
+                xSemaphoreTake(g_start_write, portMAX_DELAY);
+                g_sending = true;
+
+                size_t to_send = 0;
+                do {
+                        to_send = uart_write_callback(buf, sizeof(buf), NULL);
+                        
+                        int sent = 0;
+                        while (sent < to_send) {
+                                int s = write(g_file_desc, &buf[sent], to_send - sent);
+                                if (s < 0) {
+                                        if (errno != EAGAIN) {
+                                                break;
+                                        } else {
+                                                s = 0;
+                                        }
                                 }
+                                sent += s;
                         }
-                        sent += s;
-                }
+                } while (to_send > 0);
+
+                g_sending = false;
         }
 }
 
 void hw_uart_start_write(void)
 {
-
+        xSemaphoreGive(g_start_write);
 }
 
 bool hw_uart_stop_write(void)
 {
-        return false;
+        return g_sending;
 }
 
 static int convert_baudrate(uint32_t baudrate)
@@ -134,49 +144,35 @@ int hw_uart_init(uint32_t baudrate)
                 return -1;
         }
 
-        g_file_desc = open(PORT_NAME, O_RDWR | O_NOCTTY | O_NDELAY);
+        g_file_desc = open(PORT_NAME, O_RDWR | O_NOCTTY);
         if (g_file_desc < 0) {
                 LOG_E("cannot open port");
                 return -1;
         }
 
-        ret = flock(g_file_desc, LOCK_EX | LOCK_NB);
-        if (ret != 0) {
-                LOG_E("cannot lock port");
-                close(g_file_desc);
-                return -1;
-        }
+        struct termios attr = {0};
+        attr.c_cflag = CS8 | CLOCAL | CREAD;
+        attr.c_iflag = IGNPAR;
+        attr.c_oflag = 0;
+        attr.c_lflag = 0;
+        attr.c_cc[VMIN] = 0;
+        attr.c_cc[VTIME] = 10;
 
-        ret = tcgetattr(g_file_desc, &g_old_port_config);
-        if (ret < 0) {
-                LOG_E("cannot get port attributes");
-                close(g_file_desc);
-                flock(g_file_desc, LOCK_UN);
-                return -1;
-        }
+        cfsetispeed(&attr, br);
+        cfsetospeed(&attr, br);
 
-        memset((uint8_t*)&g_port_configs, 0, sizeof(g_port_configs));
-
-        g_port_configs.c_cflag = CS8 | CLOCAL | CREAD;
-        g_port_configs.c_iflag = IGNPAR;
-        g_port_configs.c_oflag = 0;
-        g_port_configs.c_lflag = 0;
-        g_port_configs.c_cc[VMIN] = 0;
-        g_port_configs.c_cc[VTIME] = 0;
-
-        cfsetispeed(&g_port_configs, br);
-        cfsetospeed(&g_port_configs, br);
-
-        ret = tcsetattr(g_file_desc, TCSANOW, &g_port_configs);
+        ret = tcsetattr(g_file_desc, TCSANOW, &attr);
         if(ret < 0) {
                 LOG_E("cannot set port attributes");
-                tcsetattr(g_file_desc, TCSANOW, &g_old_port_config);
                 close(g_file_desc);
                 flock(g_file_desc, LOCK_UN);
                 return -1;
         }
 
         BaseType_t s;
+
+        g_start_write = xSemaphoreCreateBinary();
+        configASSERT(g_start_write != NULL);
 
         s = xTaskCreate(rx_service, RX_TASK_NAME, RX_TASK_STACK_SIZE, NULL, RX_TASK_PRIORITY, NULL);
         configASSERT(s != pdFALSE);
