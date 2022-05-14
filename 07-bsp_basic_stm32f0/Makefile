@@ -107,6 +107,8 @@ TARGET = $(OUT_DIR)/$(PROJECT)
 
 .phony: all clean
 
+.NOTPARALLEL:
+
 all: libopencm3 $(TARGET).hex
 
 .PRECIOUS: $(OUT_DIR)/. $(OUT_DIR)%/.
