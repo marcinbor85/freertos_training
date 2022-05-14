@@ -25,11 +25,23 @@ SOFTWARE.
 #ifndef _SHELL_H
 #define _SHELL_H
 
-#define SHELL_FONT_RESET        "\x1B[0m"
+#define SHELL_FONT_RESET                "\x1B[0m"
 
-#define SHELL_FONT_RED          "\x1B[31m"
-#define SHELL_FONT_GREEN        "\x1B[32m"
-#define SHELL_FONT_YELLOW       "\x1B[33m"
+#define SHELL_FONT_BACK_RED             "\x1B[41m"
+#define SHELL_FONT_BACK_GREEN           "\x1B[42m"
+#define SHELL_FONT_BACK_YELLOW          "\x1B[43m"
+#define SHELL_FONT_BACK_BLUE            "\x1B[44m"
+#define SHELL_FONT_BACK_MAGENTA         "\x1B[45m"
+#define SHELL_FONT_BACK_CYAN            "\x1B[46m"
+#define SHELL_FONT_BACK_LIGHTGRAY       "\x1B[47m"
+
+#define SHELL_FONT_RED                  "\x1B[31m"
+#define SHELL_FONT_GREEN                "\x1B[32m"
+#define SHELL_FONT_YELLOW               "\x1B[33m"
+#define SHELL_FONT_BLUE                 "\x1B[34m"
+#define SHELL_FONT_MAGENTA              "\x1B[35m"
+#define SHELL_FONT_CYAN                 "\x1B[36m"
+#define SHELL_FONT_LIGHTGRAY            "\x1B[37m"
 
 #define SHELL_NEW_LINE          "\r\n"
 

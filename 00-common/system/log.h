@@ -26,20 +26,29 @@ SOFTWARE.
 #define _LOG_H
 
 #define LOGGING_LEVEL_NONE      0
+#define LOGGING_LEVEL_FATAL     5
 #define LOGGING_LEVEL_ERROR     10
 #define LOGGING_LEVEL_WARNING   20
 #define LOGGING_LEVEL_INFO      30
 #define LOGGING_LEVEL_DEBUG     40
+#define LOGGING_LEVEL_TRACE     50
+#define LOGGING_LEVEL_ALL       100
 
 #ifndef LOGGING_ENABLED
 #define LOGGING_ENABLED 1
 #endif
 
 #ifndef LOGGING_LEVEL
-#define LOGGING_LEVEL LOGGING_LEVEL_DEBUG
+#define LOGGING_LEVEL LOGGING_LEVEL_ALL
 #endif
 
 #if LOGGING_ENABLED != 0
+
+#if LOGGING_LEVEL >= LOGGING_LEVEL_FATAL
+#define LOG_F(fmt, ...) { log_printf(LOGGING_LEVEL_FATAL, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
+#else
+#define LOG_F(fmt, ...)
+#endif
 
 #if LOGGING_LEVEL >= LOGGING_LEVEL_ERROR
 #define LOG_E(fmt, ...) { log_printf(LOGGING_LEVEL_ERROR, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
@@ -65,14 +74,22 @@ SOFTWARE.
 #define LOG_D(fmt, ...)
 #endif
 
+#if LOGGING_LEVEL >= LOGGING_LEVEL_TRACE
+#define LOG_T(fmt, ...) { log_printf(LOGGING_LEVEL_TRACE, __FILE__, __func__, __LINE__, fmt, ##__VA_ARGS__); }
+#else
+#define LOG_T(fmt, ...)
+#endif
+
 void log_printf(int level, const char *file, const char *func, unsigned long line, const char *fmt, ...);
 
 #else
 
+#define LOG_T(fmt, ...)
 #define LOG_D(fmt, ...)
 #define LOG_I(fmt, ...)
 #define LOG_W(fmt, ...)
 #define LOG_E(fmt, ...)
+#define LOG_F(fmt, ...)
 
 #endif
 

@@ -36,12 +36,15 @@ SOFTWARE.
 void log_printf(int level, const char *file, const char *func, unsigned long line, const char *fmt, ... )
 {
         char level_name[8] = {0};
-        char prefix[8] = {0};
+        char prefix[16] = {0};
         static uint32_t cntr = 0;
 
         system_stdout_lock();
 
-        if (level <= LOGGING_LEVEL_ERROR) {
+        if (level <= LOGGING_LEVEL_FATAL) {
+                strcpy(level_name, "FATAL");
+                strcpy(prefix, SHELL_FONT_LIGHTGRAY SHELL_FONT_BACK_RED);
+        } else if (level <= LOGGING_LEVEL_ERROR) {
                 strcpy(level_name, "ERROR");
                 strcpy(prefix, SHELL_FONT_RED);
         } else if (level <= LOGGING_LEVEL_WARNING) {
@@ -50,9 +53,12 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
         } else if (level <= LOGGING_LEVEL_INFO) {
                 strcpy(level_name, "INFO");
                 strcpy(prefix, SHELL_FONT_GREEN);
-        } else {
+        } else if (level <= LOGGING_LEVEL_DEBUG) {
                 strcpy(level_name, "DEBUG");
                 strcpy(prefix, SHELL_FONT_RESET);
+        } else {
+                strcpy(level_name, "TRACE");
+                strcpy(prefix, SHELL_FONT_BLUE);
         }
         
         TickType_t ticks = xTaskGetTickCount();
