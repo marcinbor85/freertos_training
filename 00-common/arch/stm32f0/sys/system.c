@@ -14,10 +14,6 @@ static void HWInit(void)
         RCC->AHBENR = RCC_AHBENR_GPIOAEN;
         RCC->APB1ENR = RCC_APB1ENR_USART2EN;
 
-        // GPIO5 - led
-        GPIOA->MODER &= ~GPIO_MODER_MODER5;
-        GPIOA->MODER |= GPIO_MODER_MODER5_0;
-
         // USART2 - GPIOA2 - tx
         GPIOA->MODER &= ~GPIO_MODER_MODER2;
         GPIOA->MODER |= GPIO_MODER_MODER2_1;
