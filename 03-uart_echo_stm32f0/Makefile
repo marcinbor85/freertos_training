@@ -1,4 +1,4 @@
-PROJECT := uart_basic
+PROJECT := uart_echo
 
 ################################################################################
 
@@ -18,7 +18,7 @@ OUT_DIR := $(PROJECT_DIR)/out
 ################################################################################
 
 SRC_FILES := \
-	$(PROJECT_DIR)/../04-uart_basic/main.c \
+	$(PROJECT_DIR)/main.c \
 	
 INC_DIRS := \
 	$(PROJECT_DIR) \
@@ -35,16 +35,16 @@ COMMON_SRC_FILES := \
 	$(COMMON_SRC_DIR)/system/log.c \
 	$(COMMON_SRC_DIR)/system/hooks.c \
 	$(COMMON_SRC_DIR)/hal/uart.c \
-	$(COMMON_SRC_DIR)/arch/stm32/hw/uart.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/system.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/syscalls.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/interrupts.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/startup_stm32f07x.s \
+	$(COMMON_SRC_DIR)/arch/stm32f0/hw/uart.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/system.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/syscalls.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/interrupts.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/startup_stm32f07x.s \
 
 INC_DIRS += \
 	$(COMMON_SRC_DIR) \
-	$(COMMON_SRC_DIR)/arch/stm32/cmsis/device \
-	$(COMMON_SRC_DIR)/arch/stm32/cmsis/core \
+	$(COMMON_SRC_DIR)/arch/stm32f0/cmsis/device \
+	$(COMMON_SRC_DIR)/arch/stm32f0/cmsis/core \
 
 ################################################################################
 

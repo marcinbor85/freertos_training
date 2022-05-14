@@ -1,4 +1,4 @@
-PROJECT := hello_world
+PROJECT := uart_basic
 
 ################################################################################
 
@@ -18,7 +18,7 @@ OUT_DIR := $(PROJECT_DIR)/out
 ################################################################################
 
 SRC_FILES := \
-	$(PROJECT_DIR)/../01-hello_world/main.c \
+	$(PROJECT_DIR)/../04-uart_basic/main.c \
 	
 INC_DIRS := \
 	$(PROJECT_DIR) \
@@ -32,16 +32,19 @@ COMMON_SRC_DIR := $(PROJECT_DIR)/../00-common
 COMMON_SRC_FILES := \
 	$(COMMON_SRC_DIR)/system/assert.c \
 	$(COMMON_SRC_DIR)/system/print.c \
+	$(COMMON_SRC_DIR)/system/log.c \
 	$(COMMON_SRC_DIR)/system/hooks.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/system.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/syscalls.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/interrupts.c \
-	$(COMMON_SRC_DIR)/arch/stm32/sys/startup_stm32f07x.s \
+	$(COMMON_SRC_DIR)/hal/uart.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/hw/uart.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/system.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/syscalls.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/interrupts.c \
+	$(COMMON_SRC_DIR)/arch/stm32f0/sys/startup_stm32f07x.s \
 
 INC_DIRS += \
 	$(COMMON_SRC_DIR) \
-	$(COMMON_SRC_DIR)/arch/stm32/cmsis/device \
-	$(COMMON_SRC_DIR)/arch/stm32/cmsis/core \
+	$(COMMON_SRC_DIR)/arch/stm32f0/cmsis/device \
+	$(COMMON_SRC_DIR)/arch/stm32f0/cmsis/core \
 
 ################################################################################
 
@@ -72,6 +75,7 @@ MCUFLAGS := -DSTM32F072xB -mthumb -mcpu=cortex-m0
 CFLAGS := -std=gnu11 -Os -g --pedantic -Wall -Werror
 CFLAGS += $(addprefix -I,$(INC_DIRS))
 CFLAGS += $(MCUFLAGS)
+CFLAGS += -DLOGGING_ENABLED=1
 CFLAGS += -DTARGET_ARCH_STM32
 
 LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
