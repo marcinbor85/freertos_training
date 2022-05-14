@@ -1,4 +1,4 @@
-EXCEPT := 00-common/. FreeRTOS-Kernel/. libopencmd3/.
+EXCEPT := 00-common/. FreeRTOS-Kernel/. libopencm3/.
 
 SUBDIRS := $(patsubst %/.,%,$(filter-out $(EXCEPT), $(wildcard */.)))
 SUBDIRS_CLEAN := $(addsuffix .clean, $(SUBDIRS))
