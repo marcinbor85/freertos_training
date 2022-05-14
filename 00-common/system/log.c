@@ -37,7 +37,7 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
 {
         char level_name[8] = {0};
         char prefix[16] = {0};
-        static uint32_t cntr = 0;
+        static unsigned long cntr = 0;
 
         system_stdout_lock();
 
@@ -62,7 +62,7 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
         }
         
         TickType_t ticks = xTaskGetTickCount();
-        printf("%s%04u %08lu %s %s %s:%lu > ", prefix, cntr, ticks, level_name, func, file, line);
+        printf("%s%04lu %08lu %s %s %s:%lu > ", prefix, cntr, ticks, level_name, func, file, line);
         ++cntr;
 
         va_list arg;
