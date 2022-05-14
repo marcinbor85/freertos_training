@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _UART_IMPL_H
-#define _UART_IMPL_H
+#ifndef _HAL_UART_DRIVER_H
+#define _HAL_UART_DRIVER_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -38,4 +38,4 @@ extern bool hw_uart_stop_write(void);
 size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token);
 size_t uart_read_callback(uint8_t *data, size_t size, BaseType_t *token);
 
-#endif /* _UART_IMPL_H */
+#endif /* _HAL_UART_DRIVER_H */

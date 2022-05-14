@@ -21,7 +21,7 @@ SRC_FILES := \
 	$(PROJECT_DIR)/../01-hello_world/main.c \
 	
 INC_DIRS := \
-	$(PROJECT_DIR)
+	$(PROJECT_DIR) \
 
 LINKER_FILE := $(PROJECT_DIR)/stm32f0_flash.ld
 

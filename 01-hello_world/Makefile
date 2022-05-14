@@ -18,10 +18,10 @@ OUT_DIR := $(PROJECT_DIR)/out
 ################################################################################
 
 SRC_FILES := \
-	$(PROJECT_DIR)/main.c
+	$(PROJECT_DIR)/main.c \
 
 INC_DIRS := \
-	$(PROJECT_DIR)
+	$(PROJECT_DIR) \
 
 ################################################################################
 
@@ -32,7 +32,7 @@ COMMON_SRC_FILES := \
 	$(COMMON_SRC_DIR)/system/print.c \
 
 INC_DIRS += \
-	$(COMMON_SRC_DIR)
+	$(COMMON_SRC_DIR) \
 
 ################################################################################
 

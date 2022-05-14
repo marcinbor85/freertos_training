@@ -7,7 +7,7 @@
 
 #include "system/log.h"
 
-#include "uart.h"
+#include "hal/uart.h"
 
 #define TASK_NAME                       "task"
 #define TASK_PRIORITY                   (tskIDLE_PRIORITY + 1)

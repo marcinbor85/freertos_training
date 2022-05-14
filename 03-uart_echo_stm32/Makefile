@@ -21,7 +21,7 @@ SRC_FILES := \
 	$(PROJECT_DIR)/main.c \
 	
 INC_DIRS := \
-	$(PROJECT_DIR)
+	$(PROJECT_DIR) \
 
 LINKER_FILE := $(PROJECT_DIR)/stm32f0_flash.ld
 
@@ -43,8 +43,6 @@ COMMON_SRC_FILES := \
 
 INC_DIRS += \
 	$(COMMON_SRC_DIR) \
-	$(COMMON_SRC_DIR)/hal \
-	$(COMMON_SRC_DIR)/arch \
 	$(COMMON_SRC_DIR)/arch/stm32/cmsis/device \
 	$(COMMON_SRC_DIR)/arch/stm32/cmsis/core \
 

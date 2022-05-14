@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _UART_H
-#define _UART_H
+#ifndef _HAL_UART_H
+#define _HAL_UART_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -35,4 +35,4 @@ int uart_init(uint32_t baudrate);
 size_t uart_write(uint8_t *data, size_t size, TickType_t timeout);
 size_t uart_read(uint8_t *data, size_t size, TickType_t timeout);
 
-#endif /* _UART_H */
+#endif /* _HAL_UART_H */

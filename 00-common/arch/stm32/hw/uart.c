@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "uart_impl.h"
+#include "hal/uart_driver.h"
 
 #include <stdbool.h>
 
