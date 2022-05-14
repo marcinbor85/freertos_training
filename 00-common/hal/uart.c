@@ -31,7 +31,7 @@ SOFTWARE.
 #include "task.h"
 #include "stream_buffer.h"
 
-#include "log.h"
+#include "system/log.h"
 
 #define TX_STREAM_BUFFER_SIZE      64
 #define RX_STREAM_BUFFER_SIZE      64

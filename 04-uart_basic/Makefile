@@ -28,9 +28,9 @@ INC_DIRS := \
 COMMON_SRC_DIR := $(PROJECT_DIR)/../00-common
 
 COMMON_SRC_FILES := \
-	$(COMMON_SRC_DIR)/assert.c \
-	$(COMMON_SRC_DIR)/print.c \
-	$(COMMON_SRC_DIR)/log.c \
+	$(COMMON_SRC_DIR)/system/assert.c \
+	$(COMMON_SRC_DIR)/system/print.c \
+	$(COMMON_SRC_DIR)/system/log.c \
 	$(COMMON_SRC_DIR)/hal/uart.c \
 	$(COMMON_SRC_DIR)/arch/linux/hw_uart.c \
 

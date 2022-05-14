@@ -115,10 +115,10 @@ functions anyway. */
 
 /* --------- BEGIN: extensions --------- */
 
-#include "utils.h"
+#include "system/system.h"
 
-#define configASSERT( x ) { if( ( x ) == 0 ) utils_rtos_assert(__FILE__, __func__, __LINE__); }
-#define configPRINTF( ... ) { utils_rtos_printf( __VA_ARGS__ ); }
+#define configASSERT( x ) { if( ( x ) == 0 ) system_assert(__FILE__, __func__, __LINE__); }
+#define configPRINTF( ... ) { system_printf( __VA_ARGS__ ); }
 
 /* --------- END: extensions --------- */
 

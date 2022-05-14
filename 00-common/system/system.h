@@ -22,18 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _SYSTEM_H
+#define _SYSTEM_H
 
-#include "FreeRTOS.h"
-#include "task.h"
+void system_assert(const char *const file, const char *const func, unsigned long line);
+void system_printf(const char *fmt, ...);
+void system_stdout_lock(void);
+void system_stdout_unlock(void);
 
-#include "shell.h"
-
-void utils_rtos_assert(const char *const file, const char *const func, unsigned long line)
-{
-        taskENTER_CRITICAL();
-
-        fprintf(stderr, SHELL_NEW_LINE SHELL_FONT_RED "ASSERT: %s@%s:%lu" SHELL_FONT_RESET SHELL_NEW_LINE, func, file, line);
-        exit(-1);
-}
+#endif /* _SYSTEM_H */

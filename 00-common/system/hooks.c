@@ -13,13 +13,3 @@ void vApplicationStackOverflowHook(void)
         configASSERT(pdFALSE);
         exit(-1);
 }
-
-void vApplicationTickHook(void)
-{
-
-}
-
-void vApplicationIdleHook(void)
-{
-
-}

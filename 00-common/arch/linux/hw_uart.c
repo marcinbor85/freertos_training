@@ -42,7 +42,7 @@ SOFTWARE.
 #include "task.h"
 #include "semphr.h"
 
-#include "log.h"
+#include "system/log.h"
 
 static int g_file_desc;
 

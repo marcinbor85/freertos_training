@@ -19,11 +19,6 @@ OUT_DIR := $(PROJECT_DIR)/out
 
 SRC_FILES := \
 	$(PROJECT_DIR)/../04-uart_basic/main.c \
-	$(PROJECT_DIR)/hooks.c \
-	$(PROJECT_DIR)/system.c \
-	$(PROJECT_DIR)/syscalls.c \
-	$(PROJECT_DIR)/interrupts.c \
-	$(PROJECT_DIR)/startup_stm32f07x.s \
 	
 INC_DIRS := \
 	$(PROJECT_DIR)
@@ -35,18 +30,23 @@ LINKER_FILE := $(PROJECT_DIR)/stm32f0_flash.ld
 COMMON_SRC_DIR := $(PROJECT_DIR)/../00-common
 
 COMMON_SRC_FILES := \
-	$(COMMON_SRC_DIR)/assert.c \
-	$(COMMON_SRC_DIR)/print.c \
-	$(COMMON_SRC_DIR)/log.c \
+	$(COMMON_SRC_DIR)/system/assert.c \
+	$(COMMON_SRC_DIR)/system/print.c \
+	$(COMMON_SRC_DIR)/system/log.c \
+	$(COMMON_SRC_DIR)/system/hooks.c \
 	$(COMMON_SRC_DIR)/hal/uart.c \
 	$(COMMON_SRC_DIR)/arch/stm32/hw_uart.c \
+	$(COMMON_SRC_DIR)/arch/stm32/sys/system.c \
+	$(COMMON_SRC_DIR)/arch/stm32/sys/syscalls.c \
+	$(COMMON_SRC_DIR)/arch/stm32/sys/interrupts.c \
+	$(COMMON_SRC_DIR)/arch/stm32/sys/startup_stm32f07x.s \
 
 INC_DIRS += \
 	$(COMMON_SRC_DIR) \
 	$(COMMON_SRC_DIR)/hal \
 	$(COMMON_SRC_DIR)/arch \
-	$(COMMON_SRC_DIR)/cmsis/device \
-	$(COMMON_SRC_DIR)/cmsis/core \
+	$(COMMON_SRC_DIR)/arch/stm32/cmsis/device \
+	$(COMMON_SRC_DIR)/arch/stm32/cmsis/core \
 
 ################################################################################
 
@@ -87,7 +87,8 @@ LDFLAGS += --specs=nano.specs $(MCUFLAGS) -T$(LINKER_FILE)
 
 OBJS := $(addprefix $(OUT_DIR)/main/, $(patsubst $(PROJECT_DIR)/%.c,%.o,$(filter %.c,$(SRC_FILES))))
 OBJS += $(addprefix $(OUT_DIR)/main/, $(patsubst $(PROJECT_DIR)/%.s,%.o,$(filter %.s,$(SRC_FILES))))
-OBJS += $(addprefix $(OUT_DIR)/common/, $(patsubst $(COMMON_SRC_DIR)/%.c,%.o,$(COMMON_SRC_FILES)))
+OBJS += $(addprefix $(OUT_DIR)/common/, $(patsubst $(COMMON_SRC_DIR)/%.c,%.o,$(filter %.c,$(COMMON_SRC_FILES))))
+OBJS += $(addprefix $(OUT_DIR)/common/, $(patsubst $(COMMON_SRC_DIR)/%.s,%.o,$(filter %.s,$(COMMON_SRC_FILES))))
 OBJS += $(addprefix $(OUT_DIR)/freertos/, $(patsubst $(FREERTOS_SRC_DIR)/%.c,%.o,$(FREERTOS_SRC_FILES)))
 
 TARGET = $(OUT_DIR)/$(PROJECT)
@@ -128,6 +129,10 @@ $(OUT_DIR)/freertos/%.o: $(FREERTOS_SRC_DIR)/%.c | $$(@D)/.
 
 $(OUT_DIR)/common/%.o: $(COMMON_SRC_DIR)/%.c | $$(@D)/.
 	@echo "(CC) $@"
+	@$(CC) -c $(CFLAGS) $< -o $@
+
+$(OUT_DIR)/common/%.o: $(COMMON_SRC_DIR)/%.s | $$(@D)/.
+	@echo "(ASM) $@"
 	@$(CC) -c $(CFLAGS) $< -o $@
 
 clean:

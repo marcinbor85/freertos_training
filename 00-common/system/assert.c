@@ -22,42 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "system.h"
+#include "shell.h"
+
 #include <stdio.h>
-#include <stdarg.h>
+#include <stdlib.h>
 
 #include "FreeRTOS.h"
-#include "semphr.h"
+#include "task.h"
 
-static xSemaphoreHandle g_mutex;
-
-static void mutex_lazy_init(void)
+void system_assert(const char *const file, const char *const func, unsigned long line)
 {
-        if (g_mutex != NULL)
-                return;
-        g_mutex = xSemaphoreCreateMutex();
-}
+        taskENTER_CRITICAL();
 
-void utils_rtos_printf(const char *fmt, ...)
-{
-        utils_rtos_stdout_lock();
-
-        va_list arg;
-
-        va_start( arg, fmt );
-        vprintf( fmt, arg );
-        va_end( arg );
-
-        utils_rtos_stdout_unlock();
-}
-
-void utils_rtos_stdout_lock(void)
-{
-        mutex_lazy_init();
-        xSemaphoreTake(g_mutex, portMAX_DELAY);
-}
-
-void utils_rtos_stdout_unlock(void)
-{
-        mutex_lazy_init();
-        xSemaphoreGive(g_mutex);
+        fprintf(stderr, SHELL_NEW_LINE SHELL_FONT_RED "ASSERT: %s@%s:%lu" SHELL_FONT_RESET SHELL_NEW_LINE, func, file, line);
+        exit(-1);
 }

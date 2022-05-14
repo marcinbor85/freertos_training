@@ -3,7 +3,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "shell.h"
+#include "system/shell.h"
 
 #define TASK_NAME               "task"
 #define TASK_PRIORITY           (tskIDLE_PRIORITY + 1)

@@ -46,8 +46,8 @@
 extern uint32_t SystemCoreClock;
 
 #define configUSE_PREEMPTION			1
-#define configUSE_IDLE_HOOK			1
-#define configUSE_TICK_HOOK			1
+#define configUSE_IDLE_HOOK			0
+#define configUSE_TICK_HOOK			0
 #define configCPU_CLOCK_HZ			( SystemCoreClock )
 #define configTICK_RATE_HZ			( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES			( 5 )
@@ -95,10 +95,10 @@ standard names - or at least those used in the unmodified vector table. */
 
 /* --------- BEGIN: extensions --------- */
 
-#include "utils.h"
+#include "system/system.h"
 
-#define configASSERT( x ) { if( ( x ) == 0 ) utils_rtos_assert(__FILE__, __func__, __LINE__); }
-#define configPRINTF( ... ) { utils_rtos_printf( __VA_ARGS__ ); }
+#define configASSERT( x ) { if( ( x ) == 0 ) system_assert(__FILE__, __func__, __LINE__); }
+#define configPRINTF( ... ) { system_printf( __VA_ARGS__ ); }
 
 /* --------- END: extensions --------- */
 

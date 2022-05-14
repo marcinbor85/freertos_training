@@ -28,8 +28,8 @@ INC_DIRS := \
 COMMON_SRC_DIR := $(PROJECT_DIR)/../00-common
 
 COMMON_SRC_FILES := \
-	$(COMMON_SRC_DIR)/assert.c \
-	$(COMMON_SRC_DIR)/print.c \
+	$(COMMON_SRC_DIR)/system/assert.c \
+	$(COMMON_SRC_DIR)/system/print.c \
 
 INC_DIRS += \
 	$(COMMON_SRC_DIR)

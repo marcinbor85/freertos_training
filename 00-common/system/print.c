@@ -22,12 +22,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _UTILS_H
-#define _UTILS_H
+#include "system.h"
 
-void utils_rtos_assert(const char *const file, const char *const func, unsigned long line);
-void utils_rtos_printf(const char *fmt, ...);
-void utils_rtos_stdout_lock(void);
-void utils_rtos_stdout_unlock(void);
+#include <stdio.h>
+#include <stdarg.h>
 
-#endif /* _UTILS_H */
+#include "FreeRTOS.h"
+#include "semphr.h"
+
+static xSemaphoreHandle g_mutex;
+
+static void mutex_lazy_init(void)
+{
+        if (g_mutex != NULL)
+                return;
+        g_mutex = xSemaphoreCreateMutex();
+}
+
+void system_printf(const char *fmt, ...)
+{
+        system_stdout_lock();
+
+        va_list arg;
+
+        va_start( arg, fmt );
+        vprintf( fmt, arg );
+        va_end( arg );
+
+        system_stdout_unlock();
+}
+
+void system_stdout_lock(void)
+{
+        mutex_lazy_init();
+        xSemaphoreTake(g_mutex, portMAX_DELAY);
+}
+
+void system_stdout_unlock(void)
+{
+        mutex_lazy_init();
+        xSemaphoreGive(g_mutex);
+}

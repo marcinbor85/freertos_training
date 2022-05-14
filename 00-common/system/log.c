@@ -24,7 +24,7 @@ SOFTWARE.
 
 #include "log.h"
 #include "shell.h"
-#include "utils.h"
+#include "system.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -38,7 +38,7 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
         char level_name[8] = {0};
         char prefix[8] = {0};
 
-        utils_rtos_stdout_lock();
+        system_stdout_lock();
 
         if (level <= LOGGING_LEVEL_ERROR) {
                 strcpy(level_name, "ERROR");
@@ -64,5 +64,5 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
 
         printf(SHELL_FONT_RESET SHELL_NEW_LINE);
 
-        utils_rtos_stdout_unlock();
+        system_stdout_unlock();
 }
