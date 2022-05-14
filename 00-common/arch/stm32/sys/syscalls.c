@@ -29,29 +29,32 @@ SOFTWARE.
 
 extern int errno;
 
-void *_sbrk(int incr) {
+struct stat {
+        uint32_t _not_used;
+};
 
-    extern const void *_heap;
-    extern const void *_eheap;
+void *_sbrk(int incr)
+{
+        extern const void *_heap;
+        extern const void *_eheap;
 
-    void *prev_heap_ptr;
-    static void *heap_ptr;
+        void *prev_heap_ptr;
+        static void *heap_ptr;
 
-    if (heap_ptr == 0) {
-        heap_ptr = (void *)&_heap;
-    }
+        if (heap_ptr == 0)
+                heap_ptr = (void *)&_heap;
 
-    void * next_heap_ptr = (void*)((int)heap_ptr + incr);
+        void * next_heap_ptr = (void*)((int)heap_ptr + incr);
 
-    if (next_heap_ptr >= (void *) &_eheap) {
-        errno = ENOMEM;
-        return NULL;
-    }
+        if (next_heap_ptr >= (void *) &_eheap) {
+                errno = ENOMEM;
+                return NULL;
+        }
 
-    prev_heap_ptr = heap_ptr;
-    heap_ptr = next_heap_ptr;
+        prev_heap_ptr = heap_ptr;
+        heap_ptr = next_heap_ptr;
 
-    return (void *)prev_heap_ptr;
+        return (void *)prev_heap_ptr;
 }
 
 int _close(int file)

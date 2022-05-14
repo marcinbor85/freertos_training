@@ -35,7 +35,7 @@ COMMON_SRC_FILES := \
 	$(COMMON_SRC_DIR)/system/log.c \
 	$(COMMON_SRC_DIR)/system/hooks.c \
 	$(COMMON_SRC_DIR)/hal/uart.c \
-	$(COMMON_SRC_DIR)/arch/stm32/hw_uart.c \
+	$(COMMON_SRC_DIR)/arch/stm32/hw/uart.c \
 	$(COMMON_SRC_DIR)/arch/stm32/sys/system.c \
 	$(COMMON_SRC_DIR)/arch/stm32/sys/syscalls.c \
 	$(COMMON_SRC_DIR)/arch/stm32/sys/interrupts.c \

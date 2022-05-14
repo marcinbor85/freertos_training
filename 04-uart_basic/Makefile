@@ -32,7 +32,7 @@ COMMON_SRC_FILES := \
 	$(COMMON_SRC_DIR)/system/print.c \
 	$(COMMON_SRC_DIR)/system/log.c \
 	$(COMMON_SRC_DIR)/hal/uart.c \
-	$(COMMON_SRC_DIR)/arch/linux/hw_uart.c \
+	$(COMMON_SRC_DIR)/arch/linux/hw/uart.c \
 
 INC_DIRS += \
 	$(COMMON_SRC_DIR) \
