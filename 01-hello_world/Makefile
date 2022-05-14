@@ -63,6 +63,7 @@ INC_DIRS += \
 CFLAGS := -std=gnu11 -O0 -g --pedantic -Wall -Werror
 CFLAGS += $(addprefix -I,$(INC_DIRS))
 CFLAGS += -DTARGET_ARCH_LINUX
+CFLAGS += -DBOARD_PC_LINUX
 
 LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
 LDFLAGS += -lpthread -lrt

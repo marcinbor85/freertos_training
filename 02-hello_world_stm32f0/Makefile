@@ -73,6 +73,7 @@ CFLAGS := -std=gnu11 -Os -g --pedantic -Wall -Werror
 CFLAGS += $(addprefix -I,$(INC_DIRS))
 CFLAGS += $(MCUFLAGS)
 CFLAGS += -DTARGET_ARCH_STM32F0
+CFLAGS += -DBOARD_NUCLEO_STM32F0
 
 LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
 LDFLAGS += --specs=nano.specs $(MCUFLAGS) -T$(LINKER_FILE)
@@ -107,7 +108,7 @@ $(TARGET).hex: $(TARGET).elf
 
 $(TARGET).elf: $(OBJS)
 	@echo "(LD) $@"
-	@$(CC) $(LDFLAGS) $^ -o $@
+	@$(CC) $^ -o $@ $(LDFLAGS)
 
 $(OUT_DIR)/main/%.o: $(PROJECT_DIR)/%.c | $$(@D)/.
 	@echo "(CC) $@"
