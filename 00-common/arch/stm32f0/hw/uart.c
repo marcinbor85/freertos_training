@@ -76,7 +76,7 @@ bool hw_uart_stop_write(void)
 
 void USART3_4_IRQHandler(void)
 {
-        BaseType_t needSwitch = 0;
+        BaseType_t need_switch = 0;
         uint8_t b;
 
         if ((USART3->ISR & USART_ISR_ORE) != 0)
@@ -84,7 +84,7 @@ void USART3_4_IRQHandler(void)
 
         if ((USART3->CR1 & USART_CR1_TXEIE) != 0) {
                 if ((USART3->ISR & USART_ISR_TXE) != 0) {
-                        size_t to_write = uart_write_callback(&b, 1, &needSwitch);
+                        size_t to_write = uart_write_callback(&b, 1, &need_switch);
                         if (to_write == 0) {
                                 USART3->CR1 &= ~USART_CR1_TXEIE;
                                 g_sending = false;
@@ -96,8 +96,8 @@ void USART3_4_IRQHandler(void)
 
         while ((USART3->ISR & USART_ISR_RXNE) != 0) {
                 b = USART3->RDR;
-                (void)uart_read_callback(&b, 1, &needSwitch);
+                (void)uart_read_callback(&b, 1, &need_switch);
         }
 
-        portYIELD_FROM_ISR(needSwitch);
+        portYIELD_FROM_ISR(need_switch);
 }
