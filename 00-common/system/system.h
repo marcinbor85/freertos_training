@@ -25,9 +25,14 @@ SOFTWARE.
 #ifndef _SYSTEM_H
 #define _SYSTEM_H
 
+#include <stdint.h>
+
 void system_assert(const char *const file, const char *const func, unsigned long line);
 void system_printf(const char *fmt, ...);
 void system_stdout_lock(void);
 void system_stdout_unlock(void);
+
+void system_pre_sleep(uint32_t *expected_time);
+void system_post_sleep(uint32_t *expected_time);
 
 #endif /* _SYSTEM_H */
