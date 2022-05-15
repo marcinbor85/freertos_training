@@ -55,6 +55,12 @@ static void ClockInit(void)
 
         RCC->CFGR = (RCC->CFGR & ~(RCC_CFGR_SW)) | RCC_CFGR_SW_PLL; 	// select PLL output as system clock
         while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL) {};      // wait until clock switched to PLL
+
+        RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+        PWR->CR |= PWR_CR_DBP;
+
+        RCC->BDCR |= RCC_BDCR_LSEON;
+        while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0) {};
 }
 
 void SystemInit(void)
