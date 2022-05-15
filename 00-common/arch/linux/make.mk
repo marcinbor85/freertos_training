@@ -1,0 +1,2 @@
+COMMON_SRC_FILES += \
+	$(COMMON_SRC_DIR)/arch/$(TARGET_ARCH_NAME)/hw/uart.c \

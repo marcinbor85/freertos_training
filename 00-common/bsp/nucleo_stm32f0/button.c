@@ -22,15 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "button.h"
+#include "bsp/button.h"
 
 #include "system/log.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "task.h"
-
-#if defined(BOARD_NUCLEO_STM32F0)
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
@@ -104,27 +102,3 @@ bsp_button_event_t bsp_button_wait(TickType_t timeout)
         xQueueReceive(g_button_queue, &event, timeout);
         return event;
 }
-
-#elif defined(BOARD_PC_LINUX)
-
-int bsp_button_init(void)
-{
-        LOG_W("button not supported");
-        return 0;
-}
-
-bool bsp_button_is_pressed(void)
-{
-        return false;
-}
-
-bsp_button_event_t bsp_button_wait(TickType_t timeout)
-{
-        vTaskDelay(timeout);
-        return BSP_BUTTON_EVENT_TIMEOUT;
-}
-
-#else
-        #error "Unsupported board"
-#endif
-

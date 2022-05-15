@@ -22,47 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "led.h"
+#include "bsp/button.h"
 
 #include "system/log.h"
 
-#if defined(BOARD_NUCLEO_STM32F0)
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "task.h"
 
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/gpio.h>
-
-#define LED_RCC         RCC_GPIOA
-#define LED_PORT        GPIOA
-#define LED_PIN         GPIO5
-
-int bsp_led_init(void)
+int bsp_button_init(void)
 {
-        rcc_periph_clock_enable(LED_RCC);
-        gpio_mode_setup(LED_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_PIN);
-
+        LOG_W("button not supported");
         return 0;
 }
 
-void bsp_led_set_state(bool state)
+bool bsp_button_is_pressed(void)
 {
-        void (*setter)(uint32_t, uint16_t) = (state != false) ? gpio_set : gpio_clear;
-        setter(LED_PORT, LED_PIN);
+        return false;
 }
 
-#elif defined(BOARD_PC_LINUX)
-
-int bsp_led_init(void)
+bsp_button_event_t bsp_button_wait(TickType_t timeout)
 {
-        LOG_W("led not supported, use emulation instead");
-        return 0;
+        vTaskDelay(timeout);
+        return BSP_BUTTON_EVENT_TIMEOUT;
 }
-
-void bsp_led_set_state(bool state)
-{
-        LOG_W("led state = %d", state);
-}
-
-#else
-        #error "Unsupported board"
-#endif
-
