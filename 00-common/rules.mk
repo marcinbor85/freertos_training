@@ -30,7 +30,7 @@ $(TARGET).elf: $(OBJS)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 flash: $(TARGET).hex
-	@st-flash --reset --format ihex write $(TARGET).hex
+	@st-flash --connect-under-reset --reset --format ihex write $(TARGET).hex
 
 else
 
