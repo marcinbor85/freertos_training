@@ -8,6 +8,7 @@ include $(COMMON_SRC_DIR)/system/make.mk
 include $(COMMON_SRC_DIR)/arch/make.mk
 include $(COMMON_SRC_DIR)/bsp/make.mk
 include $(COMMON_SRC_DIR)/system/make.mk
+include $(COMMON_SRC_DIR)/utils/make.mk
 
 include $(COMMON_SRC_DIR)/freertos.mk
 include $(COMMON_SRC_DIR)/flags.mk
