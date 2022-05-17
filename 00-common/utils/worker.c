@@ -14,14 +14,8 @@ struct worker_cmd {
 
 static TickType_t get_remaining_time(struct worker_job *job, TickType_t now)
 {
-        TickType_t ret;
-
-        if (now - job->start_time >= job->delay) {
-                ret = 0;
-        } else {
-                ret =  job->delay + job->start_time - now;
-        }
-
+        TickType_t diff = now - job->start_time;
+        TickType_t ret = (diff >= job->delay) ? 0 : job->delay - diff;
         return ret;
 }
 
