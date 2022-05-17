@@ -33,9 +33,9 @@ SOFTWARE.
 #include "queue.h"
 
 struct system_monitor_task;
-struct system_monitor_manager;
+struct system_monitor;
 
-typedef void (*system_monitor_expired_callback_t)(struct system_monitor_manager *self, struct system_monitor_task *task);
+typedef void (*system_monitor_expired_callback_t)(struct system_monitor *self, struct system_monitor_task *task);
 
 struct system_monitor_task {
         struct system_monitor_task *next;
@@ -45,7 +45,7 @@ struct system_monitor_task {
         TickType_t permitted_delay;
 };
 
-struct system_monitor_manager {
+struct system_monitor {
         struct system_monitor_task *tasks;
         TaskHandle_t task;
         QueueHandle_t queue;
@@ -54,9 +54,9 @@ struct system_monitor_manager {
         system_monitor_expired_callback_t expired_callback;
 };
 
-struct system_monitor_manager* system_monitor_create(const char *name, uint32_t stack_size, UBaseType_t priority, UBaseType_t cmd_queue_size, TickType_t check_period, system_monitor_expired_callback_t expired_callback);
-struct system_monitor_task* system_monitor_register_task(struct system_monitor_manager *self, const char *name, TickType_t permitted_delay);
-void system_monitor_unregister_task(struct system_monitor_manager *self, struct system_monitor_task *task);
-void system_monitor_update(struct system_monitor_manager *self, struct system_monitor_task *task);
+struct system_monitor* system_monitor_create(const char *name, uint32_t stack_size, UBaseType_t priority, UBaseType_t cmd_queue_size, TickType_t check_period, system_monitor_expired_callback_t expired_callback);
+struct system_monitor_task* system_monitor_register_task(struct system_monitor *self, const char *name, TickType_t permitted_delay);
+void system_monitor_unregister_task(struct system_monitor *self, struct system_monitor_task *task);
+void system_monitor_update(struct system_monitor *self, struct system_monitor_task *task);
 
 #endif /* _UTILS_SYSTEM_MONITOR_H */

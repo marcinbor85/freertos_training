@@ -45,9 +45,9 @@ SOFTWARE.
 #define SYSTEM_MONITOR_QUEUE_SIZE       1
 #define SYSTEM_MONITOR_CHECK_PERIOD     (1000 / portTICK_RATE_MS)
 
-static struct system_monitor_manager *g_monitor;
+static struct system_monitor *g_monitor;
 
-static void expired_callback(struct system_monitor_manager *worker, struct system_monitor_task *task)
+static void expired_callback(struct system_monitor *worker, struct system_monitor_task *task)
 {
         LOG_F("system monitor time expired for <%s>", task->name);
         configASSERT(false);

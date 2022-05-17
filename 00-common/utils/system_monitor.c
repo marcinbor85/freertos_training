@@ -37,7 +37,7 @@ struct system_monitor_cmd {
         struct system_monitor_task *task;
 };
 
-static void check_all_tasks(struct system_monitor_manager *self)
+static void check_all_tasks(struct system_monitor *self)
 {
         struct system_monitor_task *task = self->tasks;
 
@@ -54,13 +54,13 @@ static void check_all_tasks(struct system_monitor_manager *self)
         }
 }
 
-static void add_task(struct system_monitor_manager *self, struct system_monitor_task *task)
+static void add_task(struct system_monitor *self, struct system_monitor_task *task)
 {
         task->next = self->tasks;
         self->tasks = task;
 }
 
-static void remove_task(struct system_monitor_manager *self, struct system_monitor_task *task)
+static void remove_task(struct system_monitor *self, struct system_monitor_task *task)
 {
         struct system_monitor_task *next_task = self->tasks;
         struct system_monitor_task *prev_task = NULL;
@@ -81,7 +81,7 @@ static void remove_task(struct system_monitor_manager *self, struct system_monit
         }
 }
 
-static void update_task(struct system_monitor_manager *self, struct system_monitor_task *task)
+static void update_task(struct system_monitor *self, struct system_monitor_task *task)
 {
         TickType_t now = xTaskGetTickCount();
 
@@ -90,7 +90,7 @@ static void update_task(struct system_monitor_manager *self, struct system_monit
 
 static void system_monitor_service_task(void *params)
 {
-        struct system_monitor_manager *self = (struct system_monitor_manager *)params;
+        struct system_monitor *self = (struct system_monitor *)params;
         struct system_monitor_cmd cmd;
         TickType_t timeout;
 
@@ -124,9 +124,9 @@ static void system_monitor_service_task(void *params)
         }
 }
 
-struct system_monitor_manager* system_monitor_create(const char *name, uint32_t stack_size, UBaseType_t priority, UBaseType_t cmd_queue_size, TickType_t check_period, system_monitor_expired_callback_t expired_callback)
+struct system_monitor* system_monitor_create(const char *name, uint32_t stack_size, UBaseType_t priority, UBaseType_t cmd_queue_size, TickType_t check_period, system_monitor_expired_callback_t expired_callback)
 {
-        struct system_monitor_manager *self = pvPortMalloc(sizeof(struct system_monitor_manager));
+        struct system_monitor *self = pvPortMalloc(sizeof(struct system_monitor));
         configASSERT(self != NULL);
 
         self->tasks = NULL;
@@ -145,7 +145,7 @@ struct system_monitor_manager* system_monitor_create(const char *name, uint32_t 
         return self;
 }
 
-struct system_monitor_task* system_monitor_register_task(struct system_monitor_manager *self, const char *name, TickType_t permitted_delay)
+struct system_monitor_task* system_monitor_register_task(struct system_monitor *self, const char *name, TickType_t permitted_delay)
 {
         struct system_monitor_task *task = pvPortMalloc(sizeof(struct system_monitor_task));
         configASSERT(task != NULL);
@@ -168,7 +168,7 @@ struct system_monitor_task* system_monitor_register_task(struct system_monitor_m
         return task;
 }
 
-void system_monitor_unregister_task(struct system_monitor_manager *self, struct system_monitor_task *task)
+void system_monitor_unregister_task(struct system_monitor *self, struct system_monitor_task *task)
 {
         struct system_monitor_cmd cmd = {
                 .type = SYSTEM_MONITOR_CMD_UNREGISTER,
@@ -178,7 +178,7 @@ void system_monitor_unregister_task(struct system_monitor_manager *self, struct 
         configASSERT(s != pdFALSE);
 }
 
-void system_monitor_update(struct system_monitor_manager *self, struct system_monitor_task *task)
+void system_monitor_update(struct system_monitor *self, struct system_monitor_task *task)
 {
         struct system_monitor_cmd cmd = {
                 .type = SYSTEM_MONITOR_CMD_UPDATE,

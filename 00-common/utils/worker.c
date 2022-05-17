@@ -43,7 +43,7 @@ static TickType_t get_remaining_time(struct worker_job *job, TickType_t now)
         return ret;
 }
 
-static void add_worker_job(struct worker_manager *self, struct worker_job *job)
+static void add_worker_job(struct worker *self, struct worker_job *job)
 {
         struct worker_job *next_job = self->jobs;
         struct worker_job *prev_job = NULL;
@@ -85,7 +85,7 @@ static void add_worker_job(struct worker_manager *self, struct worker_job *job)
         }
 }
 
-static void remove_worker_job(struct worker_manager *self, struct worker_job *job)
+static void remove_worker_job(struct worker *self, struct worker_job *job)
 {
         struct worker_job *next_job = self->jobs;
         struct worker_job *prev_job = NULL;
@@ -108,7 +108,7 @@ static void remove_worker_job(struct worker_manager *self, struct worker_job *jo
 
 static void worker_task(void *params)
 {
-        struct worker_manager *self = (struct worker_manager *)params;
+        struct worker *self = (struct worker *)params;
         struct worker_cmd cmd;
         TickType_t timeout;
         BaseType_t s;
@@ -140,9 +140,9 @@ static void worker_task(void *params)
         }
 }
 
-struct worker_manager* worker_create(const char *name, uint32_t stack_size, UBaseType_t priority, UBaseType_t cmd_queue_size, void *context)
+struct worker* worker_create(const char *name, uint32_t stack_size, UBaseType_t priority, UBaseType_t cmd_queue_size, void *context)
 {
-        struct worker_manager *self = pvPortMalloc(sizeof(struct worker_manager));
+        struct worker *self = pvPortMalloc(sizeof(struct worker));
         configASSERT(self != NULL);
 
         self->jobs = NULL;
@@ -159,7 +159,7 @@ struct worker_manager* worker_create(const char *name, uint32_t stack_size, UBas
         return self;
 }
 
-struct worker_job* worker_call_after(struct worker_manager *self, TickType_t delay, worker_callback_t callback, void *context)
+struct worker_job* worker_call_after(struct worker *self, TickType_t delay, worker_callback_t callback, void *context)
 {
         struct worker_job *job = pvPortMalloc(sizeof(struct worker_job));
         configASSERT(job != NULL);
@@ -183,7 +183,7 @@ struct worker_job* worker_call_after(struct worker_manager *self, TickType_t del
         return job;
 }
 
-void worker_cancel(struct worker_manager *self, struct worker_job *job)
+void worker_cancel(struct worker *self, struct worker_job *job)
 {
         struct worker_cmd cmd = {
                 .type = WORKER_CMD_CANCEL,

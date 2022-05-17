@@ -42,9 +42,9 @@ SOFTWARE.
 #define WORKER_STACK_SIZE               (configMINIMAL_STACK_SIZE)
 #define WORKER_QUEUE_SIZE               1
 
-static struct worker_manager *g_worker;
+static struct worker *g_worker;
 
-static void worker_callback(struct worker_manager *worker, struct worker_job *job)
+static void worker_callback(struct worker *worker, struct worker_job *job)
 {
         TickType_t now = xTaskGetTickCount();
         
