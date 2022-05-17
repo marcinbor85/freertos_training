@@ -115,6 +115,7 @@ static void worker_task(void *params)
                                 remove_worker_job(self, cmd.job);
                                 break;
                         default:
+                                configASSERT(false);
                                 break;
                         }
                 }
