@@ -33,12 +33,12 @@ SOFTWARE.
 #include "queue.h"
 
 struct worker_manager;
-struct worker_item;
+struct worker_job;
 
-typedef void (*worker_callback_t)(struct worker_manager *self, struct worker_item *item);
+typedef void (*worker_callback_t)(struct worker_manager *self, struct worker_job *job);
 
-struct worker_item {
-        struct worker_item *next;
+struct worker_job {
+        struct worker_job *next;
 
         worker_callback_t callback;
         TickType_t start_time;
@@ -47,14 +47,14 @@ struct worker_item {
 };
 
 struct worker_manager {
-        struct worker_item *items;
+        struct worker_job *jobs;
         TaskHandle_t task;
         QueueHandle_t queue;
         void *context;
 };
 
 struct worker_manager* worker_create(const char *name, uint32_t stack_size, UBaseType_t priority, UBaseType_t cmd_queue_size, void *context);
-struct worker_item* worker_call_after(struct worker_manager *self, TickType_t delay, worker_callback_t callback, void *context);
-void worker_cancel(struct worker_manager *self, struct worker_item *item);
+struct worker_job* worker_call_after(struct worker_manager *self, TickType_t delay, worker_callback_t callback, void *context);
+void worker_cancel(struct worker_manager *self, struct worker_job *job);
 
 #endif /* _UTILS_WORKER_H */

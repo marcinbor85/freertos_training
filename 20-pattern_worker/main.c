@@ -44,17 +44,17 @@ SOFTWARE.
 
 static struct worker_manager *g_worker;
 
-static void worker_callback(struct worker_manager *worker, struct worker_item *item)
+static void worker_callback(struct worker_manager *worker, struct worker_job *job)
 {
         TickType_t now = xTaskGetTickCount();
         
-        TickType_t real_diff = now - item->start_time;
-        if (real_diff > item->delay) {
-                TickType_t late = real_diff - item->delay;
+        TickType_t real_diff = now - job->start_time;
+        if (real_diff > job->delay) {
+                TickType_t late = real_diff - job->delay;
                 LOG_W("late: %ld", late);
         }
         
-        LOG_I("context = %ld, item_context = %ld", (long)worker->context, (long)item->context);
+        LOG_I("context = %ld, job_context = %ld", (long)worker->context, (long)job->context);
         vTaskDelay(50UL / portTICK_RATE_MS);
 }
 
@@ -63,21 +63,21 @@ static void task_service(void *pvParameters)
         LOG_I("started");
 
         while(1) {
-                // vTaskDelay(1000UL / portTICK_RATE_MS);
+                vTaskDelay(1000UL / portTICK_RATE_MS);
 
                 BaseType_t current_tick = xTaskGetTickCount();
                 size_t free_heap = xPortGetFreeHeapSize();
                 LOG_T("tick = %lu, free_heap = %lu", current_tick, free_heap);
 
-                struct worker_item *item1 = worker_call_after(g_worker, 300UL / portTICK_RATE_MS, worker_callback, (void*)1);
-                struct worker_item *item2 = worker_call_after(g_worker, 100UL / portTICK_RATE_MS, worker_callback, (void*)2);
-                struct worker_item *item3 = worker_call_after(g_worker, 200UL / portTICK_RATE_MS, worker_callback, (void*)3);
+                struct worker_job *job1 = worker_call_after(g_worker, 300UL / portTICK_RATE_MS, worker_callback, (void*)1);
+                struct worker_job *job2 = worker_call_after(g_worker, 100UL / portTICK_RATE_MS, worker_callback, (void*)2);
+                struct worker_job *job3 = worker_call_after(g_worker, 200UL / portTICK_RATE_MS, worker_callback, (void*)3);
 
-                (void)item1;
-                (void)item2;
-                (void)item3;
+                (void)job1;
+                (void)job2;
+                (void)job3;
                 
-                //worker_cancel(g_worker, item3);
+                //worker_cancel(g_worker, job3);
         }
 }
 
