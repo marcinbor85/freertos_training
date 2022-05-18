@@ -19,7 +19,7 @@ $(TARGET): $(OBJS)
 	@$(CC) $^ -o $@ $(LDFLAGS)
 	@$(SIZE) $@
 
-else ifeq ($(TARGET_ARCH_NAME),stm32f0)
+else ifeq ($(TARGET_ARCH_NAME),$(filter $(TARGET_ARCH_NAME),stm32f0 stm32l4))
 
 $(TARGET).hex: $(TARGET).elf
 	@$(OBJCOPY) -O ihex $^ $@

@@ -24,7 +24,7 @@ LINKER_FILE := $(PROJECT_DIR)/stm32f0_flash.ld
 
 ################################################################################
 
-FINAL_TARGETS += libopencm3
+FINAL_TARGETS := libopencm3
 
 include $(COMMON_SRC_DIR)/make.mk
 

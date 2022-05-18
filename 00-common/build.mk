@@ -9,11 +9,19 @@ TARGET := $(OUT_DIR)/$(PROJECT)
 
 ifeq ($(TARGET_ARCH_NAME),linux)
 
+ifdef FINAL_TARGETS
+FINAL_TARGETS := $(FINAL_TARGETS) $(TARGET)
+else
 FINAL_TARGETS := $(TARGET)
+endif
 
-else ifeq ($(TARGET_ARCH_NAME),stm32f0)
+else ifeq ($(TARGET_ARCH_NAME),$(filter $(TARGET_ARCH_NAME),stm32f0 stm32l4))
 
+ifdef FINAL_TARGETS
+FINAL_TARGETS += $(TARGET).hex
+else
 FINAL_TARGETS := $(TARGET).hex
+endif
 
 else
 

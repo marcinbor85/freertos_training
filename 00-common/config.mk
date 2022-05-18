@@ -2,7 +2,7 @@ ifeq ($(TARGET_ARCH_NAME),linux)
 
 TOOLCHAIN := 
 
-else ifeq ($(TARGET_ARCH_NAME),stm32f0)
+else ifeq ($(TARGET_ARCH_NAME),$(filter $(TARGET_ARCH_NAME),stm32f0 stm32l4))
 
 TOOLCHAIN := arm-none-eabi-
 

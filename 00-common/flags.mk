@@ -19,6 +19,19 @@ CFLAGS += -DLOGGING_ENABLED=1
 LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
 LDFLAGS += --specs=nano.specs $(MCUFLAGS) -T$(LINKER_FILE)
 
+else ifeq ($(TARGET_ARCH_NAME),stm32l4)
+
+MCUFLAGS := -DSTM32L476xx -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+MCUFLAGS += -DSTM32L4
+
+CFLAGS := -std=gnu11 -Os -g --pedantic -Wall -Werror
+CFLAGS += $(addprefix -I,$(INC_DIRS))
+CFLAGS += $(MCUFLAGS)
+CFLAGS += -DLOGGING_ENABLED=1
+
+LDFLAGS := -g -Wl,--gc-sections,-Map,$(OUT_DIR)/$(PROJECT).map
+LDFLAGS += --specs=nano.specs $(MCUFLAGS) -T$(LINKER_FILE)
+
 else
 
 $(error Not supported TARGET_ARCH_NAME)

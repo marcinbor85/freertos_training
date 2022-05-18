@@ -33,6 +33,14 @@ FREERTOS_SRC_FILES += \
 INC_DIRS += \
 	$(FREERTOS_SRC_DIR)/portable/GCC/ARM_CM0 \
 
+else ifeq ($(TARGET_ARCH_NAME),stm32l4)
+
+FREERTOS_SRC_FILES += \
+	$(FREERTOS_SRC_DIR)/portable/GCC/ARM_CM4F/port.c \
+
+INC_DIRS += \
+	$(FREERTOS_SRC_DIR)/portable/GCC/ARM_CM4F \
+
 else
 
 $(error Not supported TARGET_ARCH_NAME)
