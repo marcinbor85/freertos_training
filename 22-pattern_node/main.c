@@ -31,7 +31,6 @@ SOFTWARE.
 #include "task.h"
 
 #include "system/log.h"
-
 #include "utils/node.h"
 
 #define TASK_1_NAME                     "task_server"
@@ -40,10 +39,10 @@ SOFTWARE.
 #define TASK_PRIORITY                   (tskIDLE_PRIORITY + 1)
 #define TASK_STACK_SIZE                 (configMINIMAL_STACK_SIZE)
 
-static void server_control_handler(struct node *self, node_control_event_t event);
+static void server_control_handler(struct node *self, struct node_control *control);
 static void server_message_handler(struct node *self, struct node_message *message);
 
-static void client_control_handler(struct node *self, node_control_event_t event);
+static void client_control_handler(struct node *self, struct node_control *control);
 static void client_message_handler(struct node *self, struct node_message *message);
 
 static struct node_descriptor g_node_server_desc = {
@@ -87,34 +86,36 @@ typedef enum {
 } message_id;
 
 struct request_data {
-        long long comp1;
-        long long comp2;
+        long comp1;
+        long comp2;
 };
 
 struct response_data {
-        long long sum;
+        long sum;
 };
 
 struct client_context {
-        long long prev_val;
-        long long next_val;
+        long prev_val;
+        long next_val;
         message_id req_type;
 };
 
 static struct client_context g_node_client_1_context = {0, 1, ID_SERVER_MESSAGE_SUM_REQUEST};
 static struct client_context g_node_client_2_context = {2, 1, ID_SERVER_MESSAGE_MUL_REQUEST};
 
-static void server_control_handler(struct node *self, node_control_event_t event)
+static void server_control_handler(struct node *self, struct node_control *control)
 {
-        switch (event) {
-        case NODE_CONTROL_EVENT_START: {
-                LOG_I("started <%s>", self->desc->name);
+        switch (control->type) {
+        case NODE_CONTROL_TYPE_START:
+                LOG_T("started <%s>", self->desc->name);
                 break;
-        }
-        case NODE_CONTROL_EVENT_TIMEOUT:
+        case NODE_CONTROL_TYPE_TIMEOUT:
+                break;
+        case NODE_CONTROL_TYPE_NOTIFY:
+                LOG_W("notified <%s>: %ld", self->desc->name, (long)control->payload);
                 break;
         default:
-                LOG_W("unsupported event <%lu> for <%s>", event, self->desc->name);
+                LOG_W("unsupported event <%d> for <%s>", control->type, self->desc->name);
                 break;
         }
 }
@@ -127,7 +128,7 @@ static void server_message_handler(struct node *self, struct node_message *messa
                 long sum = req->comp1 + req->comp2;
                 vPortFree(message->payload);
 
-                LOG_I("request from <%s>: %lld + %lld", message->source->desc->name, req->comp1, req->comp2);
+                LOG_I("request from <%s>: %ld + %ld", message->source->desc->name, req->comp1, req->comp2);
 
                 struct response_data *resp = pvPortMalloc(sizeof(struct response_data));
                 resp->sum = sum;
@@ -139,7 +140,7 @@ static void server_message_handler(struct node *self, struct node_message *messa
                 long sum = req->comp1 * req->comp2;
                 vPortFree(message->payload);
 
-                LOG_I("request from <%s>: %lld * %lld", message->source->desc->name, req->comp1, req->comp2);
+                LOG_I("request from <%s>: %ld * %ld", message->source->desc->name, req->comp1, req->comp2);
 
                 struct response_data *resp = pvPortMalloc(sizeof(struct response_data));
                 resp->sum = sum;
@@ -152,14 +153,13 @@ static void server_message_handler(struct node *self, struct node_message *messa
         }
 }
 
-static void client_control_handler(struct node *self, node_control_event_t event)
+static void client_control_handler(struct node *self, struct node_control *control)
 {
-        switch (event) {
-        case NODE_CONTROL_EVENT_START: {
-                LOG_I("started <%s>", self->desc->name);
+        switch (control->type) {
+        case NODE_CONTROL_TYPE_START:
+                LOG_T("started <%s>", self->desc->name);
                 break;
-        }
-        case NODE_CONTROL_EVENT_TIMEOUT: {
+        case NODE_CONTROL_TYPE_TIMEOUT: {
                 struct client_context *context = (struct client_context *)self->context;
                 struct request_data *req = pvPortMalloc(sizeof(struct request_data));
                 req->comp1 = context->prev_val;
@@ -167,8 +167,11 @@ static void client_control_handler(struct node *self, node_control_event_t event
                 node_send_message(g_node_server, self, context->req_type, req, portMAX_DELAY);
                 break;
         }
+        case NODE_CONTROL_TYPE_NOTIFY:
+                LOG_W("notified <%s>: %ld", self->desc->name, (long)control->payload);
+                break;
         default:
-                LOG_W("unsupported event <%lu> for <%s>", event, self->desc->name);
+                LOG_W("unsupported event <%d> for <%s>", control->type, self->desc->name);
                 break;
         }
 }
@@ -185,7 +188,7 @@ static void client_message_handler(struct node *self, struct node_message *messa
                         context->prev_val = context->next_val;
                         context->next_val = resp->sum;
                 }
-                LOG_I("response for <%s>: %lld", self->desc->name, resp->sum);
+                LOG_I("response for <%s>: %ld", self->desc->name, resp->sum);
                 vPortFree(resp);
                 break;
         }
@@ -201,17 +204,33 @@ static void client_message_handler(struct node *self, struct node_message *messa
 
 static void task_service(void *pvParameters)
 {
-        LOG_I("started");
+        int i = 0;
+
+        LOG_D("started");
 
         while(1) {
                 vTaskDelay(5000UL / portTICK_RATE_MS);
 
                 BaseType_t current_tick = xTaskGetTickCount();
                 size_t free_heap = xPortGetFreeHeapSize();
-                LOG_T("tick = %lu, free_heap = %lu", current_tick, free_heap);
+                LOG_D("tick = %lu, free_heap = %lu", current_tick, free_heap);
+
+                switch (i) {
+                case 0:
+                        node_notify(g_node_server, (void*)current_tick, portMAX_DELAY);
+                        i++;
+                        break;
+                case 1:
+                        node_notify(g_node_client_1, (void*)current_tick, portMAX_DELAY);
+                        i++;
+                        break;
+                case 2:
+                        node_notify(g_node_client_2, (void*)current_tick, portMAX_DELAY);
+                        i = 0;
+                        break;  
+                }
         }
 }
-
 
 int main(void)
 {

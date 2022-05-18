@@ -27,6 +27,7 @@ SOFTWARE.
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -34,20 +35,28 @@ SOFTWARE.
 
 struct node;
 struct node_message;
-
-typedef enum {
-        NODE_CONTROL_EVENT_START,
-        NODE_CONTROL_EVENT_TIMEOUT,
-} node_control_event_t;
+struct node_control;
 
 typedef void (*node_message_handler_t)(struct node *self, struct node_message *message);
-typedef void (*node_control_handler_t)(struct node *self, node_control_event_t event);
+typedef void (*node_control_handler_t)(struct node *self, struct node_control *control);
+
+typedef enum {
+        NODE_CONTROL_TYPE_START,
+        NODE_CONTROL_TYPE_NOTIFY,
+        NODE_CONTROL_TYPE_TIMEOUT,
+} node_control_t;
+
+struct node_control {
+        node_control_t type;
+
+        void *payload;
+};
 
 struct node_message {
         struct node *dest;
         struct node *source;
 
-        BaseType_t id;
+        uint32_t id;
         void *payload;
 };
 
@@ -70,10 +79,10 @@ struct node {
         TickType_t last_wakeup;
 
         void *context;
-        void *local_context;
 };
 
 struct node* node_create(const struct node_descriptor *desc, void *context);
 BaseType_t node_send_message(struct node *dest, struct node *source, BaseType_t id, void *payload, BaseType_t timeout);
+BaseType_t node_notify(struct node *dest, void *payload, BaseType_t timeout);
 
 #endif /* _UTILS_NODE_H */
