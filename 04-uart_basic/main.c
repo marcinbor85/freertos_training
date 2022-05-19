@@ -45,8 +45,19 @@ SOFTWARE.
 #define UART_SEND_TASK_PRIORITY         (tskIDLE_PRIORITY + 1)
 #define UART_SEND_TASK_STACK_SIZE       (configMINIMAL_STACK_SIZE)
 
+#if defined(TARGET_ARCH_LINUX)
+#define UART_PORT                       "/dev/ttyUSB0"
+#else
+#define UART_PORT                       "uart3"
+#endif
+
 #define UART_BAUDRATE                   115200
 #define RX_BUFFER_SIZE                  16
+
+#define UART_TX_BUF_SIZE                64
+#define UART_RX_BUF_SIZE                64
+
+static struct uart *g_uart;
 
 static void task_service(void *pvParameters)
 {
@@ -69,7 +80,7 @@ static void uart_recv_service(void *pvParameters)
 
         while(1) {
                 memset(buf, 0, sizeof(buf));
-                uart_read(buf, sizeof(buf) - 1, portMAX_DELAY);
+                uart_read(g_uart, buf, sizeof(buf) - 1, portMAX_DELAY);
                 LOG_I("received: <%s>", (char*)buf);
         }
 }
@@ -83,7 +94,7 @@ static void uart_send_service(void *pvParameters)
         TickType_t last_tick = xTaskGetTickCount();
         while(1) {
                 vTaskDelayUntil(&last_tick, 1000UL / portTICK_RATE_MS);
-                uart_write((uint8_t*)&ch, 1, portMAX_DELAY);
+                uart_write(g_uart, (uint8_t*)&ch, 1, portMAX_DELAY);
                 if (++ch > '~')
                         ch = '!';
         }
@@ -102,8 +113,9 @@ int main(void)
         s = xTaskCreate(uart_send_service, UART_SEND_TASK_NAME, UART_SEND_TASK_STACK_SIZE, NULL, UART_SEND_TASK_PRIORITY, NULL);
         configASSERT(s != pdFALSE);
 
-        uart_init(UART_BAUDRATE);
-        
+        g_uart = uart_open(UART_PORT, UART_BAUDRATE, UART_TX_BUF_SIZE, UART_RX_BUF_SIZE);
+        configASSERT(g_uart != NULL);
+
         vTaskStartScheduler();
         configASSERT(pdFALSE);
 }
