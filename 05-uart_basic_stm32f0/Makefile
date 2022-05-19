@@ -138,4 +138,4 @@ clean:
 	@$(RM) -rf $(OUT_DIR)
 
 flash: $(TARGET).hex
-	@st-flash --reset --format ihex write $(TARGET).hex
+	@st-flash --connect-under-reset --reset --format ihex write $(TARGET).hex
