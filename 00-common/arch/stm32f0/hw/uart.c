@@ -25,6 +25,7 @@ SOFTWARE.
 #include "hal/uart_driver.h"
 
 #include <stdbool.h>
+#include <string.h>
 
 #include <stm32f0xx.h>
 
@@ -32,71 +33,95 @@ SOFTWARE.
 
 extern uint32_t SystemPeripheralClock;
 
-static bool g_sending;
+struct hw_uart {
+        USART_TypeDef *uart;
+        bool sending;
+};
 
-int hw_uart_init(uint32_t baudrate)
+static struct uart *g_uart_array[4];
+
+int hw_uart_init(struct uart *self)
 {
-        RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
-        RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+        struct hw_uart *hw_uart = pvPortMalloc(sizeof(struct hw_uart));
+        configASSERT(hw_uart != NULL);
 
-        // USART3 - GPIOC10 - tx
-        GPIOC->MODER &= ~GPIO_MODER_MODER10;
-        GPIOC->MODER |= GPIO_MODER_MODER10_1;
-        GPIOC->AFR[1] &= ~GPIO_AFRH_AFSEL10;
-        GPIOC->AFR[1] |= (0x01 << GPIO_AFRH_AFSEL10_Pos);
+        self->hw_driver = hw_uart;
+        hw_uart->sending = false;
 
-        // USART3 - GPIOC11 - rx
-        GPIOC->MODER &= ~GPIO_MODER_MODER11;
-        GPIOC->MODER |= GPIO_MODER_MODER11_1;
-        GPIOC->AFR[1] &= ~GPIO_AFRH_AFSEL11;
-        GPIOC->AFR[1] |= (0x01 << GPIO_AFRH_AFSEL11_Pos);
+        if (strcmp(self->port, "uart3") == 0) {
+                hw_uart->uart = USART3;
+                g_uart_array[3] = self;
 
-        // USART3 - config and enable
-        USART3->CR1 = 0;
-        USART3->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_RXNEIE;
-        USART3->BRR = SystemPeripheralClock / baudrate;
-        USART3->CR1 |= USART_CR1_UE;
+                RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+                RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
 
-        NVIC_EnableIRQ(USART3_4_IRQn);
+                // USART3 - GPIOC10 - tx
+                GPIOC->MODER &= ~GPIO_MODER_MODER10;
+                GPIOC->MODER |= GPIO_MODER_MODER10_1;
+                GPIOC->AFR[1] &= ~GPIO_AFRH_AFSEL10;
+                GPIOC->AFR[1] |= (0x01 << GPIO_AFRH_AFSEL10_Pos);
+
+                // USART3 - GPIOC11 - rx
+                GPIOC->MODER &= ~GPIO_MODER_MODER11;
+                GPIOC->MODER |= GPIO_MODER_MODER11_1;
+                GPIOC->AFR[1] &= ~GPIO_AFRH_AFSEL11;
+                GPIOC->AFR[1] |= (0x01 << GPIO_AFRH_AFSEL11_Pos);
+
+                // USART3 - config and enable
+                hw_uart->uart->CR1 = 0;
+                hw_uart->uart->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_RXNEIE;
+                hw_uart->uart->BRR = SystemPeripheralClock / self->baudrate;
+                hw_uart->uart->CR1 |= USART_CR1_UE;
+
+                NVIC_EnableIRQ(USART3_4_IRQn);
+        } else {
+                vPortFree(hw_uart);
+                return -1;
+        }
 
         return 0;
 }
 
-void hw_uart_start_write(void)
+void hw_uart_start_write(struct uart *self)
 {
-        g_sending = true;
-        USART3->CR1 |= USART_CR1_TXEIE;
+        struct hw_uart *hw_uart = (struct hw_uart *)self->hw_driver;
+        hw_uart->sending = true;
+        hw_uart->uart->CR1 |= USART_CR1_TXEIE;
 }
 
-bool hw_uart_stop_write(void)
+bool hw_uart_stop_write(struct uart *self)
 {
-        USART3->CR1 &= ~USART_CR1_TXEIE;
-        return g_sending;
+        struct hw_uart *hw_uart = (struct hw_uart *)self->hw_driver;
+        hw_uart->uart->CR1 &= ~USART_CR1_TXEIE;
+        return hw_uart->sending;
 }
 
 void USART3_4_IRQHandler(void)
 {
+        struct uart *self = g_uart_array[3];
+        struct hw_uart *hw_uart = (struct hw_uart *)self->hw_driver;
+
         BaseType_t need_switch = 0;
         uint8_t b;
 
-        if ((USART3->ISR & USART_ISR_ORE) != 0)
-                USART3->ICR = USART_ISR_ORE;
+        if ((hw_uart->uart->ISR & USART_ISR_ORE) != 0)
+                hw_uart->uart->ICR = USART_ISR_ORE;
 
-        if ((USART3->CR1 & USART_CR1_TXEIE) != 0) {
-                if ((USART3->ISR & USART_ISR_TXE) != 0) {
-                        size_t to_write = uart_write_callback(&b, 1, &need_switch);
+        if ((hw_uart->uart->CR1 & USART_CR1_TXEIE) != 0) {
+                if ((hw_uart->uart->ISR & USART_ISR_TXE) != 0) {
+                        size_t to_write = uart_write_callback(self, &b, 1, &need_switch);
                         if (to_write == 0) {
-                                USART3->CR1 &= ~USART_CR1_TXEIE;
-                                g_sending = false;
+                                hw_uart->uart->CR1 &= ~USART_CR1_TXEIE;
+                                hw_uart->sending = false;
                         } else {
-                                USART3->TDR = b;
+                                hw_uart->uart->TDR = b;
                         }
                 }
         }
 
-        while ((USART3->ISR & USART_ISR_RXNE) != 0) {
-                b = USART3->RDR;
-                (void)uart_read_callback(&b, 1, &need_switch);
+        while ((hw_uart->uart->ISR & USART_ISR_RXNE) != 0) {
+                b = hw_uart->uart->RDR;
+                (void)uart_read_callback(self, &b, 1, &need_switch);
         }
 
         portYIELD_FROM_ISR(need_switch);

@@ -26,19 +26,26 @@ SOFTWARE.
 
 #include "hal/uart.h"
 
-#define UART_BAUDRATE   115200
+#define UART_BAUDRATE           115200
+#define UART_PORT               "/dev/ttyUSB0"
+#define UART_TX_BUF_SIZE        64
+#define UART_RX_BUF_SIZE        64
+
+static struct uart *g_uart;
 
 int bsp_uart_init(void)
 {
-        return uart_init(UART_BAUDRATE);
+        g_uart = uart_open(UART_PORT, UART_BAUDRATE, UART_TX_BUF_SIZE, UART_RX_BUF_SIZE);
+        configASSERT(g_uart != NULL);
+        return (g_uart != NULL) ? 0 : -1;
 }
 
 size_t bsp_uart_write(uint8_t *data, size_t size, TickType_t timeout)
 {
-        return uart_write(data, size, timeout);
+        return uart_write(g_uart, data, size, timeout);
 }
 
 size_t bsp_uart_read(uint8_t *data, size_t size, TickType_t timeout)
 {
-        return uart_read(data, size, timeout);
+        return uart_read(g_uart, data, size, timeout);
 }

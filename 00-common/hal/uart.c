@@ -33,68 +33,71 @@ SOFTWARE.
 
 #include "system/log.h"
 
-#define TX_STREAM_BUFFER_SIZE      64
-#define RX_STREAM_BUFFER_SIZE      64
-
-static StreamBufferHandle_t g_rx_stream;
-static StreamBufferHandle_t g_tx_stream;
-
-size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token)
+size_t uart_write_callback(struct uart *self, uint8_t *data, size_t size, BaseType_t *token)
 {
         size_t s;
-        s = xStreamBufferReceiveFromISR(g_tx_stream, data, size, token);
+        s = xStreamBufferReceiveFromISR(self->tx_stream, data, size, token);
         return s;
 }
 
-size_t uart_read_callback(uint8_t *data, size_t size, BaseType_t *token)
+size_t uart_read_callback(struct uart *self, uint8_t *data, size_t size, BaseType_t *token)
 {
         size_t s;
-        s = xStreamBufferSendFromISR(g_rx_stream, data, size, token);
+        s = xStreamBufferSendFromISR(self->rx_stream, data, size, token);
         return s;
 }
 
-size_t uart_write(uint8_t *data, size_t size, TickType_t timeout)
+size_t uart_write(struct uart *self, uint8_t *data, size_t size, TickType_t timeout)
 {
         size_t sent = 0;
         if (size == 0)
                 return 0;
 
-        bool sending = hw_uart_stop_write();
-        sent = xStreamBufferSend(g_tx_stream, data, size, timeout);
+        bool sending = hw_uart_stop_write(self);
+        sent = xStreamBufferSend(self->tx_stream, data, size, timeout);
         if (sent > 0) {
                 LOG_D("sent %d bytes", sent);
-                hw_uart_start_write();
+                hw_uart_start_write(self);
         } else {
                 if (sending != false)
-                        hw_uart_start_write();
+                        hw_uart_start_write(self);
         }
         return sent;
 }
 
-size_t uart_read(uint8_t *data, size_t size, TickType_t timeout)
+size_t uart_read(struct uart *self, uint8_t *data, size_t size, TickType_t timeout)
 {
         size_t recv = 0;
-        recv = xStreamBufferReceive(g_rx_stream, data, size, timeout);
+        recv = xStreamBufferReceive(self->rx_stream, data, size, timeout);
         if (recv > 0) {
                 LOG_D("received %d bytes", recv);
         }
         return recv;
 }
 
-int uart_init(uint32_t baudrate)
+struct uart* uart_open(const char *port, uint32_t baudrate, size_t tx_buf_size, size_t rx_buf_size)
 {        
-        g_tx_stream = xStreamBufferCreate(TX_STREAM_BUFFER_SIZE, 0);
-        configASSERT(g_tx_stream != pdFALSE);
+        struct uart *self = pvPortMalloc(sizeof(struct uart));
+        configASSERT(self != NULL);
 
-        g_rx_stream = xStreamBufferCreate(RX_STREAM_BUFFER_SIZE, 0);
-        configASSERT(g_rx_stream != pdFALSE);
+        self->baudrate = baudrate;
+        self->port = port;
+        self->hw_driver = NULL;
+        
+        self->tx_stream = xStreamBufferCreate(tx_buf_size, 0);
+        configASSERT(self->tx_stream != pdFALSE);
 
-        int s = hw_uart_init(baudrate);
+        self->rx_stream = xStreamBufferCreate(rx_buf_size, 0);
+        configASSERT(self->rx_stream != pdFALSE);
+
+        int s = hw_uart_init(self);
         if (s != 0) {
-                LOG_E("init error: %d", s);
+                LOG_E("cannot open port: %s", self->port);
+                vPortFree(self);
+                self = NULL;
         } else {
                 LOG_I("initialized");
         }
 
-        return s;
+        return self;
 }

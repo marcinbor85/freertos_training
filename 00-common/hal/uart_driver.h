@@ -29,13 +29,15 @@ SOFTWARE.
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "hal/uart.h"
+
 #include "FreeRTOS.h"
 
-extern int hw_uart_init(uint32_t baudrate);
-extern void hw_uart_start_write(void);
-extern bool hw_uart_stop_write(void);
+extern int hw_uart_init(struct uart *self);
+extern void hw_uart_start_write(struct uart *self);
+extern bool hw_uart_stop_write(struct uart *self);
 
-size_t uart_write_callback(uint8_t *data, size_t size, BaseType_t *token);
-size_t uart_read_callback(uint8_t *data, size_t size, BaseType_t *token);
+size_t uart_write_callback(struct uart *self, uint8_t *data, size_t size, BaseType_t *token);
+size_t uart_read_callback(struct uart *self, uint8_t *data, size_t size, BaseType_t *token);
 
 #endif /* _HAL_UART_DRIVER_H */

@@ -29,10 +29,21 @@ SOFTWARE.
 #include <stddef.h>
 
 #include "FreeRTOS.h"
+#include "stream_buffer.h"
 
-int uart_init(uint32_t baudrate);
+struct uart {
+        char const* port;
+        uint32_t baudrate;
 
-size_t uart_write(uint8_t *data, size_t size, TickType_t timeout);
-size_t uart_read(uint8_t *data, size_t size, TickType_t timeout);
+        StreamBufferHandle_t tx_stream;
+        StreamBufferHandle_t rx_stream;
+
+        void *hw_driver;
+};
+
+struct uart* uart_open(const char *port, uint32_t baudrate, size_t tx_buf_size, size_t rx_buf_size);
+
+size_t uart_write(struct uart *self, uint8_t *data, size_t size, TickType_t timeout);
+size_t uart_read(struct uart *self, uint8_t *data, size_t size, TickType_t timeout);
 
 #endif /* _HAL_UART_H */
