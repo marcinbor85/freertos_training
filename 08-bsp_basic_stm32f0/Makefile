@@ -15,7 +15,7 @@ include $(COMMON_SRC_DIR)/config.mk
 ################################################################################
 
 SRC_FILES := \
-	$(PROJECT_DIR)/../06-bsp_basic/main.c \
+	$(PROJECT_DIR)/../07-bsp_basic/main.c \
 	
 INC_DIRS := \
 	$(PROJECT_DIR) \
