@@ -70,22 +70,6 @@ void SystemInit(void)
 
 void system_pre_sleep(uint32_t *expected_time)
 {        
-        uint32_t rtc_wakeup_time = *expected_time;
-
-        *expected_time = 0;
-
-        RTC->WPR = 0xCA;
-        RTC->WPR = 0x53;
-        RTC->WUTR = rtc_wakeup_time;
-        RTC->WPR = 0xFF; 
-
-        PWR->CR  &= ~PWR_CR_PDDS;
-        PWR->CR  |= PWR_CR_LPDS;
-        SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-        
-        __asm volatile ( "dsb" ::: "memory" );
-        __asm volatile ( "wfi" );
-        __asm volatile ( "isb" );
 }
 
 void system_post_sleep(uint32_t *expected_time)
