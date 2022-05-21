@@ -43,3 +43,10 @@ void DebugMon_Handler(void)
 // {
 //         HAL_IncTick();
 // }
+
+#include <libopencm3/stm32/lptimer.h>
+
+void LPTIM1_IRQHandler(void)
+{
+        lptimer_clear_flag(LPTIM1, LPTIM_ICR_CMPMCF);
+}
