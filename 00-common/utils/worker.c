@@ -150,11 +150,11 @@ struct worker* worker_create(const char *name, uint32_t stack_size, UBaseType_t 
 
         BaseType_t s;
         
-        s = xTaskCreate(worker_task, name, stack_size, self, priority, &self->task);     
-        configASSERT(s != pdFALSE);
-
         self->queue = xQueueCreate(cmd_queue_size, sizeof(struct worker_cmd));
         configASSERT(self->queue != NULL);
+
+        s = xTaskCreate(worker_task, name, stack_size, self, priority, &self->task);     
+        configASSERT(s != pdFALSE);
 
         return self;
 }

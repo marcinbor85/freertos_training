@@ -94,11 +94,11 @@ struct node* node_create(const struct node_descriptor *desc, void *context)
 
         BaseType_t s;
         
-        s = xTaskCreate(service_task, self->desc->name, self->desc->stack_size, self, self->desc->priority, &self->task);     
-        configASSERT(s != pdFALSE);
-
         self->queue = xQueueCreate(self->desc->message_queue_size, sizeof(struct node_queue_item));
         configASSERT(self->queue != NULL);
+
+        s = xTaskCreate(service_task, self->desc->name, self->desc->stack_size, self, self->desc->priority, &self->task);     
+        configASSERT(s != pdFALSE);
 
         return self;
 }

@@ -136,11 +136,11 @@ struct system_monitor* system_monitor_create(const char *name, uint32_t stack_si
 
         BaseType_t s;
         
-        s = xTaskCreate(system_monitor_service_task, name, stack_size, self, priority, &self->task);     
-        configASSERT(s != pdFALSE);
-
         self->queue = xQueueCreate(cmd_queue_size, sizeof(struct system_monitor_cmd));
         configASSERT(self->queue != NULL);
+
+        s = xTaskCreate(system_monitor_service_task, name, stack_size, self, priority, &self->task);     
+        configASSERT(s != pdFALSE);
 
         return self;
 }
