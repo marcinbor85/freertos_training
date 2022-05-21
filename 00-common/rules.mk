@@ -32,6 +32,9 @@ $(TARGET).elf: $(OBJS)
 flash: $(TARGET).hex
 	@st-flash --connect-under-reset --reset --format ihex write $(TARGET).hex
 
+erase:
+	@st-flash --connect-under-reset erase
+
 else
 
 $(error Not supported TARGET_ARCH_NAME)
