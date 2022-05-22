@@ -54,12 +54,19 @@ void system_printf(const char *fmt, ...)
 
 void system_stdout_lock(void)
 {
+        // if (xPortIsInsideInterrupt() != pdFALSE)
+        //         return;
+        // if (xPortIsInsideCriticalSection() != pdFALSE)
+        //         return;
         mutex_lazy_init();
         xSemaphoreTake(g_mutex, portMAX_DELAY);
 }
 
 void system_stdout_unlock(void)
 {
-        mutex_lazy_init();
+        // if (xPortIsInsideInterrupt() != pdFALSE)
+        //         return;
+        // if (xPortIsInsideCriticalSection() != pdFALSE)
+        //         return;
         xSemaphoreGive(g_mutex);
 }
