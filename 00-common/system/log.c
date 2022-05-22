@@ -58,7 +58,7 @@ void log_printf(int level, const char *file, const char *func, unsigned long lin
                 strcpy(prefix, SHELL_FONT_RESET);
         } else {
                 strcpy(level_name, "TRACE");
-                strcpy(prefix, SHELL_FONT_BLUE);
+                strcpy(prefix, SHELL_FONT_CYAN);
         }
         
         TickType_t ticks = xTaskGetTickCount();
