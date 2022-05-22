@@ -28,15 +28,15 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdint.h>
 
-#define traceQUEUE_CREATE(x)                    { printf("traceQUEUE_CREATE: 0x%08lX\r\n", (uint32_t)x); }
-#define traceQUEUE_SEND(x)                      { printf("traceQUEUE_SEND: 0x%08lX\r\n", (uint32_t)x); }
-#define traceQUEUE_SEND_FROM_ISR(x)             { printf("traceQUEUE_SEND_FROM_ISR: 0x%08lX\r\n", (uint32_t)x); }
-#define traceQUEUE_RECEIVE(x)                   { printf("traceQUEUE_RECEIVE: 0x%08lX\r\n", (uint32_t)x); }
+#define traceQUEUE_CREATE(x)                    { printf("traceQUEUE_CREATE: 0x%08lX\r\n", (long unsigned int)x); }
+#define traceQUEUE_SEND(x)                      { printf("traceQUEUE_SEND: 0x%08lX\r\n", (long unsigned int)x); }
+#define traceQUEUE_SEND_FROM_ISR(x)             { printf("traceQUEUE_SEND_FROM_ISR: 0x%08lX\r\n", (long unsigned int)x); }
+#define traceQUEUE_RECEIVE(x)                   { printf("traceQUEUE_RECEIVE: 0x%08lX\r\n", (long unsigned int)x); }
 
 // #define traceTASK_SWITCHED_IN()              { printf("traceTASK_SWITCHED_IN: <%s>\r\n", pxCurrentTCB->pcTaskName); }
 // #define traceTASK_SWITCHED_OUT()             { printf("traceTASK_SWITCHED_OUT: <%s>\r\n", pxCurrentTCB->pcTaskName); }
 
-#define traceMALLOC( pvAddress, uiSize )        { printf("traceMALLOC: 0x%08lX [%d]\r\n", (uint32_t)pvAddress, uiSize); }
-#define traceFREE( pvAddress, uiSize )          { printf("traceFREE: 0x%08lX [%d]\r\n", (uint32_t)pvAddress, uiSize); }
+#define traceMALLOC( pvAddress, uiSize )        { printf("traceMALLOC: 0x%08lX [%lu]\r\n", (long unsigned int)pvAddress, (long unsigned int)uiSize); }
+#define traceFREE( pvAddress, uiSize )          { printf("traceFREE: 0x%08lX [%lu]\r\n", (long unsigned int)pvAddress, (long unsigned int)uiSize); }
 
 #endif /* _TRACE_H */
