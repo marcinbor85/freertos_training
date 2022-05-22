@@ -85,7 +85,8 @@ static void task_service(void *pvParameters)
                 BaseType_t current_tick = xTaskGetTickCount();
                 size_t free_heap = xPortGetFreeHeapSize();
                 LOG_T("tick = %lu, free_heap = %lu", current_tick, free_heap);
-                high_stack_usage(0);
+                (void)high_stack_usage;
+                //high_stack_usage(0);
         }
 }
 
