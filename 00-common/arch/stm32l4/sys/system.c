@@ -7,10 +7,13 @@
 #include <libopencm3/stm32/flash.h>
 #include <libopencm3/stm32/pwr.h>
 #include <libopencm3/stm32/lptimer.h>
+#include <libopencm3/stm32/timer.h>
 
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/scb.h>
 #include <libopencm3/cm3/systick.h>
+
+#include "FreeRTOS.h"
 
 uint32_t SystemCoreClock = 80000000UL;
 
@@ -131,4 +134,25 @@ void system_post_sleep(uint32_t *expected_time)
         *expected_time = (elapsed < *expected_time) ? elapsed : *expected_time;
 
         ClockInit();
+}
+
+uint32_t g_runtime_stat_timer_overflow_cntr;
+
+void system_config_runtime_stat_timer( void )
+{
+        rcc_periph_clock_enable(RCC_TIM2);
+	rcc_periph_reset_pulse(RST_TIM2);
+        
+	timer_set_prescaler(TIM2, (rcc_apb1_frequency / (configTICK_RATE_HZ * 100UL)));
+	timer_set_period(TIM2, 65535);
+	timer_enable_counter(TIM2);
+	timer_enable_irq(TIM2, TIM_DIER_UIE);
+
+        nvic_set_priority(NVIC_TIM2_IRQ, 0x01);
+        nvic_enable_irq(NVIC_TIM2_IRQ);
+}
+
+uint32_t system_get_runtime_stat_timer_count(void)
+{
+        return (g_runtime_stat_timer_overflow_cntr << 16) + timer_get_counter(TIM2);
 }

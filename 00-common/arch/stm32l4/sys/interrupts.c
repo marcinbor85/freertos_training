@@ -45,8 +45,20 @@ void DebugMon_Handler(void)
 // }
 
 #include <libopencm3/stm32/lptimer.h>
+#include <libopencm3/stm32/timer.h>
 
 void LPTIM1_IRQHandler(void)
 {
         lptimer_clear_flag(LPTIM1, LPTIM_ICR_CMPMCF);
+}
+
+extern uint32_t g_runtime_stat_timer_overflow_cntr;
+
+void TIM2_IRQHandler(void)
+{
+        if (timer_get_flag(TIM2, TIM_SR_UIF) == false)
+                return;
+        
+        timer_clear_flag(TIM2, TIM_SR_UIF);
+        g_runtime_stat_timer_overflow_cntr++;
 }
