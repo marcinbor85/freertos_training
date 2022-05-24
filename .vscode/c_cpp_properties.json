@@ -1,0 +1,55 @@
+{
+    "configurations": [
+        {
+            "name": "common",
+            "includePath": [
+                "00-common/arch/stm32f0/cmsis/device",
+                "00-common/arch/stm32f0/cmsis/core",
+                "00-common/arch/stm32l4/cmsis/device",
+                "00-common/arch/stm32l4/cmsis/core",
+                "00-common",
+                "00-common/hal",
+                "00-common/bsp",
+                "00-common/arch",
+                "00-common/system",
+                "00-common/utils",
+                "01-hello_world",
+                "02-hello_world_stm32f0",
+                "03-uart_echo_stm32f0",
+                "04-uart_basic",
+                "05-uart_basic_stm32f0",
+                "07-bsp_basic",
+                "08-bsp_basic_stm32f0",
+                "09-bsp_basic_stm32l4",
+                "10-low_power_stm32f0",
+                "11-low_power_stm32l4",
+                "13-debug_task_stm32l4",
+                "14-debug_trace_stm32l4",
+                "20-pattern_worker",
+                "21-pattern_system_monitor",
+                "22-pattern_node",
+                "23-pattern_node_stm32l4",
+                "FreeRTOS-Kernel/include",
+                "FreeRTOS-Kernel/portable/GCC/ARM_CM0",
+                "FreeRTOS-Kernel/portable/GCC/ARM_CM4F",
+                "FreeRTOS-Kernel/portable/ThirdParty/GCC/Posix",
+                "FreeRTOS-Kernel/portable/ThirdParty/GCC/Posix/utils",
+                "libopencm3/include",
+                "libopencm3/include/libopencm3/stm32"
+            ],
+            "defines": [
+                "STM32F072xb",
+                "STM32F0",
+                "STM32L476xx",
+                "STM32L4",
+                "TARGET_ARCH_STM32",
+                "BOARD_NUCLEO_STM32F0"
+            ],
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++14"
+        }
+    ],
+    "version": 4
+}
